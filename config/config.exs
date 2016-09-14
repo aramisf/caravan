@@ -28,7 +28,7 @@ config :guardian, Guardian,
   ttl: {30, :days},
   verify_issuer: true,
   serializer: Caravan.GuardianSerializer,
-  secret_key: "#{Mix.env}SuPerseCret_aBraCadabrA"
+  secret_key: "#{Mix.env}#{System.get_env("SECRET_KEY_BASE") || "SuPerseCret_aBraCadabrA"}"
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
