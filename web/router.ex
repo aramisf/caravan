@@ -13,8 +13,25 @@ defmodule Caravan.Router do
     plug :accepts, ["json"]
   end
 
+  pipeline :with_session do
+    plug Guardian.Plug.VerifySession
+    plug Guardian.Plug.LoadResource
+    plug Caravan.CurrentUser
+  end
+
+  pipeline :browser_authenticated do
+    plug Guardian.Plug.EnsureAuthenticated, handler: Caravan.BrowserAuthHandler
+  end
+
   scope "/", Caravan do
-    pipe_through :browser # Use the default browser stack
+    pipe_through [:browser, :with_session]
+
+    resources "/sessions", SessionController, only: [:new, :create, :delete]
+    resources "/users", UserController, only: [:new, :create]
+  end
+
+  scope "/", Caravan do
+    pipe_through [:browser, :with_session, :browser_authenticated]
 
     get "/", PageController, :index
     resources "/users", UserController

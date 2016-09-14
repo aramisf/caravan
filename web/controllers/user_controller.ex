@@ -17,8 +17,9 @@ defmodule Caravan.UserController do
     changeset = User.creation_changeset(%User{}, user_params)
 
     case Repo.insert(changeset) do
-      {:ok, _user} ->
+      {:ok, user} ->
         conn
+        |> Guardian.Plug.sign_in(user)
         |> put_flash(:info, "User created successfully.")
         |> redirect(to: user_path(conn, :index))
       {:error, changeset} ->
