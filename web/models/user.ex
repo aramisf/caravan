@@ -6,6 +6,7 @@ defmodule Caravan.User do
     field :password, :string, virtual: true
     field :encrypted_password, :string
     field :name, :string
+    field :role, :string
 
     timestamps()
   end
@@ -15,9 +16,10 @@ defmodule Caravan.User do
   """
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, [:email, :name])
+    |> cast(params, [:email, :name, :role])
     |> validate_required([:email, :name])
     |> validate_format(:email, ~r/@/)
+    |> validate_inclusion(:role, ["admin"])
   end
 
   @doc """

@@ -34,7 +34,7 @@ defmodule Caravan.Router do
     pipe_through [:browser, :with_session, :browser_authenticated]
 
     get "/", PageController, :index
-    resources "/users", UserController
+    resources "/users", UserController, except: [:new, :create]
   end
 
   # Other scopes may use custom stacks.

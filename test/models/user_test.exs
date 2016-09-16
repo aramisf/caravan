@@ -3,7 +3,12 @@ defmodule Caravan.UserTest do
 
   alias Caravan.User
 
-  @valid_attrs %{email: "joao@mail.com", name: "João", password: "password"}
+  @valid_attrs %{
+    email: "joao@mail.com",
+    name: "João",
+    password: "password",
+    role: "admin"
+  }
   @invalid_attrs %{}
 
   test "changeset with valid attributes" do
@@ -19,6 +24,11 @@ defmodule Caravan.UserTest do
   test "email must contain at least an @" do
     attrs = %{@valid_attrs | email: "joao.com"}
     assert {:email, "has invalid format"} in errors_on(%User{}, attrs)
+  end
+
+  test "role must be admin or nothing" do
+    attrs = %{@valid_attrs | role: "other"}
+    assert {:role, "is invalid"} in errors_on(%User{}, attrs)
   end
 
   test "creation_changeset with encrypts password" do

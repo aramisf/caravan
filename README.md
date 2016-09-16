@@ -79,4 +79,5 @@ And more like this:
 
 ## More Details
 
-* Authorization was developed following [this guide](https://medium.com/@andreichernykh/phoenix-simple-authentication-authorization-in-step-by-step-tutorial-form-dc93ea350153)
+* Authentication was developed following [this guide](https://medium.com/@andreichernykh/phoenix-simple-authentication-authorization-in-step-by-step-tutorial-form-dc93ea350153)
+* Authorization was made using [this gem](https://github.com/schrockwell/bodyguard)

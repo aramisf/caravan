@@ -5,7 +5,7 @@ defmodule Caravan.UserController do
 
   def index(conn, _params) do
     users = Repo.all(User)
-    render(conn, "index.html", users: users)
+    conn |> authorize!(User) |> render("index.html", users: users)
   end
 
   def new(conn, _params) do
@@ -21,7 +21,7 @@ defmodule Caravan.UserController do
         conn
         |> Guardian.Plug.sign_in(user)
         |> put_flash(:info, "User created successfully.")
-        |> redirect(to: user_path(conn, :index))
+        |> redirect(to: "/")
       {:error, changeset} ->
         render(conn, "new.html", changeset: changeset)
     end
@@ -29,18 +29,22 @@ defmodule Caravan.UserController do
 
   def show(conn, %{"id" => id}) do
     user = Repo.get!(User, id)
-    render(conn, "show.html", user: user)
+    conn |> authorize!(user) |> render("show.html", user: user)
   end
 
   def edit(conn, %{"id" => id}) do
     user = Repo.get!(User, id)
     changeset = User.changeset(user)
-    render(conn, "edit.html", user: user, changeset: changeset)
+
+    conn |> authorize!(user)
+    |> render("edit.html", user: user, changeset: changeset)
   end
 
   def update(conn, %{"id" => id, "user" => user_params}) do
     user = Repo.get!(User, id)
     changeset = User.changeset(user, user_params)
+
+    authorize!(conn, user)
 
     case Repo.update(changeset) do
       {:ok, user} ->
@@ -54,6 +58,8 @@ defmodule Caravan.UserController do
 
   def delete(conn, %{"id" => id}) do
     user = Repo.get!(User, id)
+
+    authorize!(conn, user)
 
     # Here we use delete! (with a bang) because we expect
     # it to always work (and if it does not, it will raise).

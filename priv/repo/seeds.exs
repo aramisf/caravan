@@ -13,6 +13,7 @@
 poorguy = %{
   email: "poor@mail.com",
   name: "Poor",
-  password: "poor"
+  password: "poor",
+  role: "admin"
 }
 Caravan.Repo.insert!(Caravan.User.creation_changeset(%Caravan.User{}, poorguy))
