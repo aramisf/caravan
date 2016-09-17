@@ -4,6 +4,8 @@ defmodule Caravan.BillController do
   alias Caravan.Bill
   alias Caravan.User
 
+  alias Caravan.BillService
+
   def index(conn, _params) do
     bills = Bill |> Repo.all |> Repo.preload([:creator, :payer])
     render(conn, "index.html", bills: bills)
@@ -16,9 +18,8 @@ defmodule Caravan.BillController do
 
   def create(conn, %{"bill" => bill_params}) do
     bill_params = Map.put(bill_params, "creator_id", current_user(conn).id)
-    changeset = Bill.changeset(%Bill{}, bill_params)
 
-    case Repo.insert(changeset) do
+    case BillService.create(bill_params) do
       {:ok, _bill} ->
         conn
         |> put_flash(:info, "Bill created successfully.")

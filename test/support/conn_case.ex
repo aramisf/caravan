@@ -20,33 +20,17 @@ defmodule Caravan.ConnCase do
       # Import conveniences for testing with connections
       use Phoenix.ConnTest
 
-      alias Caravan.Repo
-      alias Caravan.User
       import Ecto
       import Ecto.Changeset
       import Ecto.Query
 
       import Caravan.Router.Helpers
 
+      import Caravan.UserTestHelpers
+      import Caravan.SessionTestHelpers
+
       # The default endpoint for testing
       @endpoint Caravan.Endpoint
-
-      # We need a way to get into the connection to login a user
-      # We need to use the bypass_through to fire the plugs in the router
-      # and get the session fetched.
-      def create_user do
-        attrs = %{email: "io@mail.com", name: "io", password: "io"}
-        Repo.insert!(User.creation_changeset(%User{}, attrs))
-      end
-
-      def sign_in(conn, user \\ create_user, token \\ :token, opts \\ []) do
-        conn
-          |> bypass_through(Caravan.Router, [:browser])
-          |> get("/")
-          |> Guardian.Plug.sign_in(user, token, opts)
-          |> send_resp(200, "Flush the session yo")
-          |> recycle()
-      end
     end
   end
 

@@ -3,6 +3,7 @@ defmodule Caravan.BillControllerTest do
 
   alias Caravan.Repo
   alias Caravan.Bill
+  alias Caravan.BillItem
   alias Caravan.User
 
   @invalid_attrs %{}
@@ -44,6 +45,14 @@ defmodule Caravan.BillControllerTest do
     user = Repo.get_by(Bill, valid_attrs)
     assert user
     assert user.creator_id == my_user.id
+  end
+
+  test "creates resource and a bill item with it", %{conn: conn} do
+    valid_attrs = build_valid_attrs
+
+    conn |> sign_in |> post(bill_path(conn, :create), bill: valid_attrs)
+    bill = Repo.get_by(Bill, valid_attrs)
+    assert Repo.get_by(BillItem, %{bill_id: bill.id})
   end
 
   test "does not create resource and renders errors when data is invalid", %{conn: conn} do
