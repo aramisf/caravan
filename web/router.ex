@@ -36,6 +36,7 @@ defmodule Caravan.Router do
     get "/", PageController, :index
     resources "/users", UserController, except: [:new, :create]
     resources "/bills", BillController
+    resources "/bill_items", BillItemController
   end
 
   # Other scopes may use custom stacks.
