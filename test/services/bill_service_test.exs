@@ -1,6 +1,8 @@
 defmodule Caravan.BillServiceTest do
   use Caravan.ServiceCase
 
+  import Caravan.UserTestHelpers
+
   alias Caravan.Repo
   alias Caravan.BillItem
   alias Caravan.BillService

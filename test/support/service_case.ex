@@ -15,8 +15,6 @@ defmodule Caravan.ServiceCase do
       import Ecto
       import Ecto.Changeset
       import Ecto.Query
-
-      import Caravan.UserTestHelpers
     end
   end
 

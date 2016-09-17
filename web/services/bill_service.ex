@@ -1,4 +1,6 @@
 defmodule Caravan.BillService do
+  use Caravan.BaseService
+
   alias Caravan.Repo
   alias Caravan.Bill
   alias Caravan.BillItem

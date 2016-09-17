@@ -3,6 +3,7 @@ defmodule Caravan.BillItemController do
 
   alias Caravan.Bill
   alias Caravan.BillItem
+  alias Caravan.BillItemService
 
   def index(conn, _params) do
     bill_items = Repo.all(BillItem)
@@ -61,13 +62,16 @@ defmodule Caravan.BillItemController do
   def delete(conn, %{"id" => id}) do
     bill_item = Repo.get!(BillItem, id)
 
-    # Here we use delete! (with a bang) because we expect
-    # it to always work (and if it does not, it will raise).
-    Repo.delete!(bill_item)
-
-    conn
-    |> put_flash(:info, "Bill item deleted successfully.")
-    |> redirect(to: bill_item_path(conn, :index))
+    case BillItemService.delete(bill_item) do
+      :ok ->
+        conn
+        |> put_flash(:info, "Bill item deleted successfully.")
+        |> redirect(to: bill_item_path(conn, :index))
+      {:error, message} ->
+        conn
+        |> put_flash(:error, message)
+        |> redirect(to: bill_item_path(conn, :index))
+    end
   end
 
   defp load_bills do

@@ -1,29 +1,13 @@
 defmodule Caravan.BillItemControllerTest do
   use Caravan.ConnCase
 
+  import Caravan.BillItemTestHelpers
+
   alias Caravan.Repo
-  alias Caravan.Bill
   alias Caravan.BillItem
-  alias Caravan.User
 
   @valid_attrs %{bill_id: 1, amount: 42}
   @invalid_attrs %{}
-
-  def real_valid_attrs do
-    user = Repo.insert!(User.creation_changeset(%User{}, %{
-                          email: "admin@dummy.com",
-                          name: "Admin",
-                          password: "password",
-                          role: "admin"
-                        }))
-
-    bill = Repo.insert!(Bill.changeset(%Bill{}, %{
-                          creator_id: user.id,
-                          payer_id: user.id
-                        }))
-
-    %{bill_id: bill.id, amount: 62, description: "Real valid item"}
-  end
 
   test "lists all entries on index", %{conn: conn} do
     conn = conn |> sign_in |> get(bill_item_path(conn, :index))
@@ -36,7 +20,7 @@ defmodule Caravan.BillItemControllerTest do
   end
 
   test "creates resource and redirects when data is valid", %{conn: conn} do
-    create_valid_attrs = real_valid_attrs
+    create_valid_attrs = valid_bill_item_attrs
     conn = conn |> sign_in
            |> post(bill_item_path(conn, :create), bill_item: create_valid_attrs)
     assert redirected_to(conn) == bill_item_path(conn, :index)
@@ -69,7 +53,7 @@ defmodule Caravan.BillItemControllerTest do
   end
 
   test "updates chosen resource and redirects when data is valid", %{conn: conn} do
-    update_valid_attrs = real_valid_attrs
+    update_valid_attrs = valid_bill_item_attrs
     bill_item = Repo.insert! %BillItem{}
     conn = conn |> sign_in
            |> put(bill_item_path(conn, :update, bill_item), bill_item: update_valid_attrs)
@@ -85,9 +69,22 @@ defmodule Caravan.BillItemControllerTest do
   end
 
   test "deletes chosen resource", %{conn: conn} do
-    bill_item = Repo.insert! %BillItem{}
+    bill_item_one = create_bill_item
+
+    attrs_for_two = %{bill_id: bill_item_one.bill_id, amount: 0}
+    bill_item_two = create_bill_item(attrs_for_two)
+    old_id = bill_item_two.id
+
+    conn = conn |> sign_in
+           |> delete(bill_item_path(conn, :delete, bill_item_two))
+    assert redirected_to(conn) == bill_item_path(conn, :index)
+    refute Repo.get(BillItem, old_id)
+  end
+
+  test "does not delete the only resource", %{conn: conn} do
+    bill_item = create_bill_item
     conn = conn |> sign_in |> delete(bill_item_path(conn, :delete, bill_item))
     assert redirected_to(conn) == bill_item_path(conn, :index)
-    refute Repo.get(BillItem, bill_item.id)
+    assert Repo.get(BillItem, bill_item.id)
   end
 end
