@@ -1,21 +1,13 @@
 defmodule Caravan.BillControllerTest do
   use Caravan.ConnCase
 
+  import Caravan.BillTestHelpers
+
   alias Caravan.Repo
   alias Caravan.Bill
   alias Caravan.BillItem
-  alias Caravan.User
 
   @invalid_attrs %{}
-
-  def build_valid_attrs do
-    user = Repo.insert!(User.creation_changeset(%User{}, %{
-                          email: "real@dummy.com",
-                          name: "Real",
-                          password: "password",
-                        }))
-    %{payer_id: user.id}
-  end
 
   test "lists all entries on index", %{conn: conn} do
     conn = conn |> sign_in |> get(bill_path(conn, :index))
@@ -28,7 +20,7 @@ defmodule Caravan.BillControllerTest do
   end
 
   test "creates resource and redirects when data is valid", %{conn: conn} do
-    valid_attrs = build_valid_attrs
+    valid_attrs = Map.delete(valid_bill_attrs, :creator_id)
 
     conn = conn |> sign_in |> post(bill_path(conn, :create), bill: valid_attrs)
     assert redirected_to(conn) == bill_path(conn, :index)
@@ -37,7 +29,7 @@ defmodule Caravan.BillControllerTest do
 
   test "creates resource and set the creator to the current user", %{conn: conn} do
     my_user = create_user
-    valid_attrs = build_valid_attrs
+    valid_attrs = Map.delete(valid_bill_attrs, :creator_id)
 
     conn = conn |> sign_in(my_user)
            |> post(bill_path(conn, :create), bill: valid_attrs)
@@ -48,7 +40,7 @@ defmodule Caravan.BillControllerTest do
   end
 
   test "creates resource and a bill item with it", %{conn: conn} do
-    valid_attrs = build_valid_attrs
+    valid_attrs = Map.delete(valid_bill_attrs, :creator_id)
 
     conn |> sign_in |> post(bill_path(conn, :create), bill: valid_attrs)
     bill = Repo.get_by(Bill, valid_attrs)
@@ -63,9 +55,8 @@ defmodule Caravan.BillControllerTest do
 
   test "shows chosen resource", %{conn: conn} do
     my_user = create_user
-    valid_attrs = Map.put(build_valid_attrs, :creator_id, my_user.id)
 
-    bill = Repo.insert! Bill.changeset(%Bill{}, valid_attrs)
+    bill = create_bill
     conn = conn |> sign_in(my_user) |> get(bill_path(conn, :show, bill))
     assert html_response(conn, 200) =~ "Show bill"
   end
@@ -84,7 +75,7 @@ defmodule Caravan.BillControllerTest do
   end
 
   test "updates chosen resource and redirects when data is valid", %{conn: conn} do
-    valid_attrs = build_valid_attrs
+    valid_attrs = Map.delete(valid_bill_attrs, :creator_id)
 
     bill = Repo.insert! %Bill{}
     conn = conn |> sign_in

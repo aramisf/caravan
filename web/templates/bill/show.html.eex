@@ -12,6 +12,10 @@
     <%= @bill.payer.name %>
   </li>
 
+  <li>
+    <strong>Total amount:</strong>
+    <%= total_amount @bill %>
+  </li>
 </ul>
 
 <%= link "Edit", to: bill_path(@conn, :edit, @bill) %>

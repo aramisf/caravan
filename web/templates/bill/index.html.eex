@@ -5,6 +5,7 @@
     <tr>
       <th>Creator</th>
       <th>Payer</th>
+      <th>Total amount</th>
 
       <th></th>
     </tr>
@@ -14,6 +15,7 @@
     <tr>
       <td><%= bill.creator.name %></td>
       <td><%= bill.payer.name %></td>
+      <td><%= total_amount bill %></td>
 
       <td class="text-right">
         <%= link "Show", to: bill_path(@conn, :show, bill), class: "btn btn-default btn-xs" %>
