@@ -1,0 +1,18 @@
+<h2>Show bill</h2>
+
+<ul>
+
+  <li>
+    <strong>Creator:</strong>
+    <%= @bill.creator.name %>
+  </li>
+
+  <li>
+    <strong>Payer:</strong>
+    <%= @bill.payer.name %>
+  </li>
+
+</ul>
+
+<%= link "Edit", to: bill_path(@conn, :edit, @bill) %>
+<%= link "Back", to: bill_path(@conn, :index) %>
