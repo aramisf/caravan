@@ -13,7 +13,7 @@
   <tbody>
 <%= for bill_member <- @bill_members do %>
     <tr>
-      <td><%= bill_member.user_id %></td>
+      <td><%= bill_member.user.name %></td>
       <td><%= bill_member.bill_item_id %></td>
       <td><%= bill_member.paid %></td>
 

@@ -3,10 +3,11 @@ defmodule Caravan.BillMemberController do
 
   alias Caravan.BillItem
   alias Caravan.BillMember
+  alias Caravan.BillMemberService
   alias Caravan.User
 
   def index(conn, _params) do
-    bill_members = Repo.all(BillMember)
+    bill_members = Repo.all(BillMember) |> Repo.preload(:user)
     render(conn, "index.html", bill_members: bill_members)
   end
 
@@ -35,7 +36,7 @@ defmodule Caravan.BillMemberController do
   end
 
   def show(conn, %{"id" => id}) do
-    bill_member = Repo.get!(BillMember, id)
+    bill_member = Repo.get!(BillMember, id) |> Repo.preload(:user)
     render(conn, "show.html", bill_member: bill_member)
   end
 
@@ -70,13 +71,16 @@ defmodule Caravan.BillMemberController do
   def delete(conn, %{"id" => id}) do
     bill_member = Repo.get!(BillMember, id)
 
-    # Here we use delete! (with a bang) because we expect
-    # it to always work (and if it does not, it will raise).
-    Repo.delete!(bill_member)
-
-    conn
-    |> put_flash(:info, "Bill member deleted successfully.")
-    |> redirect(to: bill_member_path(conn, :index))
+    case BillMemberService.delete(bill_member) do
+      :ok ->
+        conn
+        |> put_flash(:info, "Bill member deleted successfully.")
+        |> redirect(to: bill_member_path(conn, :index))
+      {:error, message} ->
+        conn
+        |> put_flash(:error, message)
+        |> redirect(to: bill_member_path(conn, :index))
+    end
   end
 
   defp load_bill_items do

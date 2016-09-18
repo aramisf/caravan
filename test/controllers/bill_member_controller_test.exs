@@ -34,7 +34,7 @@ defmodule Caravan.BillMemberControllerTest do
   end
 
   test "shows chosen resource", %{conn: conn} do
-    bill_member = Repo.insert! %BillMember{}
+    bill_member = create_bill_member
     conn = conn |> sign_in |> get(bill_member_path(conn, :show, bill_member))
     assert html_response(conn, 200) =~ "Show bill member"
   end
@@ -72,10 +72,25 @@ defmodule Caravan.BillMemberControllerTest do
   end
 
   test "deletes chosen resource", %{conn: conn} do
-    bill_member = Repo.insert! %BillMember{}
+    bill_member_one = create_bill_member
+
+    bill_member_two = create_bill_member(%{
+      bill_item_id: bill_member_one.bill_item_id,
+      user_id: create_user.id,
+      paid: false
+    })
+    old_id = bill_member_two.id
+
     conn = conn |> sign_in
-           |> delete(bill_member_path(conn, :delete, bill_member))
+           |> delete(bill_member_path(conn, :delete, bill_member_two))
     assert redirected_to(conn) == bill_member_path(conn, :index)
-    refute Repo.get(BillMember, bill_member.id)
+    refute Repo.get(BillMember, old_id)
+  end
+
+  test "does not delete the only resource", %{conn: conn} do
+    bill_member = create_bill_member
+    conn = conn |> sign_in |> delete(bill_member_path(conn, :delete, bill_member))
+    assert redirected_to(conn) == bill_member_path(conn, :index)
+    assert Repo.get(BillMember, bill_member.id)
   end
 end

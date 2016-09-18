@@ -5,7 +5,7 @@ defmodule Caravan.Repo.Migrations.CreateBillMember do
     create table(:bill_members) do
       add :paid, :boolean, default: false, null: false
       add :user_id, references(:users, on_delete: :nothing)
-      add :bill_item_id, references(:bill_items, on_delete: :nothing)
+      add :bill_item_id, references(:bill_items, on_delete: :delete_all)
 
       timestamps()
     end
