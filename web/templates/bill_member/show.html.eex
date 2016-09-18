@@ -1,0 +1,23 @@
+<h2>Show bill member</h2>
+
+<ul>
+
+  <li>
+    <strong>User:</strong>
+    <%= @bill_member.user_id %>
+  </li>
+
+  <li>
+    <strong>Bill item:</strong>
+    <%= @bill_member.bill_item_id %>
+  </li>
+
+  <li>
+    <strong>Paid:</strong>
+    <%= @bill_member.paid %>
+  </li>
+
+</ul>
+
+<%= link "Edit", to: bill_member_path(@conn, :edit, @bill_member) %>
+<%= link "Back", to: bill_member_path(@conn, :index) %>
