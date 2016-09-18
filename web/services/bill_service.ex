@@ -4,6 +4,7 @@ defmodule Caravan.BillService do
   alias Caravan.Repo
   alias Caravan.Bill
   alias Caravan.BillItem
+  alias Caravan.BillMember
 
   def create(params \\ %{}) do
     bill_changeset = Bill.changeset %Bill{}, params
@@ -11,9 +12,16 @@ defmodule Caravan.BillService do
     if bill_changeset.valid? do
       Repo.transaction fn ->
         bill = Repo.insert!(bill_changeset)
-        item_params = %{bill_id: bill.id, description: "Main item", amount: 0}
 
-        Repo.insert! BillItem.changeset(%BillItem{}, item_params)
+        item_params = %{bill_id: bill.id, description: "Main item", amount: 0}
+        bill_item = Repo.insert! BillItem.changeset(%BillItem{}, item_params)
+
+        member_params = %{
+          bill_item_id: bill_item.id,
+          user_id: bill.payer_id,
+          paid: true
+        }
+        Repo.insert! BillMember.changeset(%BillMember{}, member_params)
 
         bill
       end

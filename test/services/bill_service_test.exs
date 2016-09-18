@@ -5,6 +5,7 @@ defmodule Caravan.BillServiceTest do
 
   alias Caravan.Repo
   alias Caravan.BillItem
+  alias Caravan.BillMember
   alias Caravan.BillService
 
   @invalid_attrs %{}
@@ -17,6 +18,15 @@ defmodule Caravan.BillServiceTest do
   test "with valid attributes creates an item for the new bill" do
     {:ok, bill} = BillService.create(valid_attrs)
     assert Repo.get_by(BillItem, bill_id: bill.id)
+  end
+
+  test "with valid attributes assigns the payer as member in the new bill" do
+    {:ok, bill} = BillService.create(valid_attrs)
+    bill_item = Repo.get_by(BillItem, bill_id: bill.id)
+    assert Repo.get_by(BillMember,
+                       bill_item_id: bill_item.id,
+                       user_id: bill.payer_id,
+                       paid: true)
   end
 
   test "with invalid attributes return an invalid changeset" do
