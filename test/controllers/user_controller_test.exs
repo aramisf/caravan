@@ -1,23 +1,21 @@
 defmodule Caravan.UserControllerTest do
   use Caravan.ConnCase
 
+  import Caravan.UserTestHelpers
+
   alias Caravan.Repo
   alias Caravan.User
 
   @valid_attrs %{email: "joao@mail.com", name: "João", password: "password"}
   @invalid_attrs %{}
 
-  def admin_user do
-    Repo.insert!(User.creation_changeset(%User{}, %{
-                   email: "admin@dummy.com",
-                   name: "Admin",
-                   password: "password",
-                   role: "admin"
-                 }))
+  setup %{conn: conn} do
+    conn = sign_in(conn, create_user(valid_admin_user_attrs))
+    {:ok, conn: conn}
   end
 
   test "lists all entries on index", %{conn: conn} do
-    conn = conn |> sign_in(admin_user) |> get(user_path(conn, :index))
+    conn = get(conn, user_path(conn, :index))
     assert html_response(conn, 200) =~ "Listing users"
   end
 
@@ -33,18 +31,17 @@ defmodule Caravan.UserControllerTest do
   end
 
   test "does not create resource and renders errors when data is invalid", %{conn: conn} do
-    conn = conn |> sign_in(admin_user) |> post(user_path(conn, :create), user: @invalid_attrs)
+    conn = post(conn, user_path(conn, :create), user: @invalid_attrs)
     assert html_response(conn, 200) =~ "New user"
   end
 
   test "shows chosen resource", %{conn: conn} do
     user = Repo.insert! %User{}
-    conn = conn |> sign_in(admin_user) |> get(user_path(conn, :show, user))
+    conn = get(conn, user_path(conn, :show, user))
     assert html_response(conn, 200) =~ "Show user"
   end
 
   test "renders page not found when id is nonexistent", %{conn: conn} do
-    conn = conn |> sign_in(admin_user)
     assert_error_sent 404, fn ->
       get(conn, user_path(conn, :show, -1))
     end
@@ -52,30 +49,26 @@ defmodule Caravan.UserControllerTest do
 
   test "renders form for editing chosen resource", %{conn: conn} do
     user = Repo.insert! %User{}
-    conn = conn |> sign_in(admin_user) |> get(user_path(conn, :edit, user))
+    conn = get(conn, user_path(conn, :edit, user))
     assert html_response(conn, 200) =~ "Edit user"
   end
 
   test "updates chosen resource and redirects when data is valid", %{conn: conn} do
     user = Repo.insert! %User{}
-    conn = conn
-           |> sign_in(admin_user)
-           |> put(user_path(conn, :update, user), user: @valid_attrs)
+    conn = put(conn, user_path(conn, :update, user), user: @valid_attrs)
     assert redirected_to(conn) == user_path(conn, :show, user)
     assert Repo.get_by(User, Map.delete(@valid_attrs, :password))
   end
 
   test "does not update chosen resource and renders errors when data is invalid", %{conn: conn} do
     user = Repo.insert! %User{}
-    conn = conn
-           |> sign_in(admin_user)
-           |> put(user_path(conn, :update, user), user: @invalid_attrs)
+    conn = put(conn, user_path(conn, :update, user), user: @invalid_attrs)
     assert html_response(conn, 200) =~ "Edit user"
   end
 
   test "deletes chosen resource", %{conn: conn} do
     user = Repo.insert! %User{}
-    conn = conn |> sign_in(admin_user) |> delete(user_path(conn, :delete, user))
+    conn = delete(conn, user_path(conn, :delete, user))
     assert redirected_to(conn) == user_path(conn, :index)
     refute Repo.get(User, user.id)
   end

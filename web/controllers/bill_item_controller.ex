@@ -5,18 +5,27 @@ defmodule Caravan.BillItemController do
   alias Caravan.BillItem
   alias Caravan.BillItemService
 
+  plug :verify_authorized
+
   def index(conn, _params) do
-    bill_items = Repo.all(BillItem)
-    render(conn, "index.html", bill_items: bill_items)
+    bill_items = scope(conn, BillItem) |> Repo.all
+
+    conn |> authorize!(BillItem) |> render("index.html", bill_items: bill_items)
   end
 
   def new(conn, _params) do
-    changeset = BillItem.changeset(%BillItem{})
-    render(conn, "new.html", changeset: changeset, bills: load_bills)
+    bill_item = %BillItem{}
+    conn = authorize!(conn, bill_item)
+
+    changeset = BillItem.changeset(bill_item)
+
+    render(conn, "new.html", changeset: changeset, bills: load_bills(conn))
   end
 
   def create(conn, %{"bill_item" => bill_item_params}) do
     changeset = BillItem.changeset(%BillItem{}, bill_item_params)
+
+    conn = authorize!(conn, changeset.data)
 
     case Repo.insert(changeset) do
       {:ok, _bill_item} ->
@@ -24,27 +33,32 @@ defmodule Caravan.BillItemController do
         |> put_flash(:info, "Bill item created successfully.")
         |> redirect(to: bill_item_path(conn, :index))
       {:error, changeset} ->
-        render(conn, "new.html", changeset: changeset, bills: load_bills)
+        render(conn, "new.html", changeset: changeset, bills: load_bills(conn))
     end
   end
 
   def show(conn, %{"id" => id}) do
-    bill_item = Repo.get!(BillItem, id)
-    render(conn, "show.html", bill_item: bill_item)
+    bill_item = scope(conn, BillItem) |> Repo.get!(id)
+    conn |> authorize!(bill_item) |> render("show.html", bill_item: bill_item)
   end
 
   def edit(conn, %{"id" => id}) do
-    bill_item = Repo.get!(BillItem, id)
+    bill_item = scope(conn, BillItem) |> Repo.get!(id)
+    conn = authorize!(conn, bill_item)
+
     changeset = BillItem.changeset(bill_item)
+
     render(conn, "edit.html",
            bill_item: bill_item,
            changeset: changeset,
-           bills: load_bills)
+           bills: load_bills(conn))
   end
 
   def update(conn, %{"id" => id, "bill_item" => bill_item_params}) do
-    bill_item = Repo.get!(BillItem, id)
+    bill_item = scope(conn, BillItem) |> Repo.get!(id)
     changeset = BillItem.changeset(bill_item, bill_item_params)
+
+    conn = authorize!(conn, bill_item)
 
     case Repo.update(changeset) do
       {:ok, bill_item} ->
@@ -55,12 +69,14 @@ defmodule Caravan.BillItemController do
         render(conn, "edit.html",
                bill_item: bill_item,
                changeset: changeset,
-               bills: load_bills)
+               bills: load_bills(conn))
     end
   end
 
   def delete(conn, %{"id" => id}) do
-    bill_item = Repo.get!(BillItem, id)
+    bill_item = scope(conn, BillItem) |> Repo.get!(id)
+
+    conn = authorize!(conn, bill_item)
 
     case BillItemService.delete(bill_item) do
       :ok ->
@@ -74,8 +90,14 @@ defmodule Caravan.BillItemController do
     end
   end
 
-  defp load_bills do
-    query = from(b in Bill, select: {b.id, b.id})
+  defp current_user(conn) do
+    Guardian.Plug.current_resource(conn)
+  end
+
+  defp load_bills(conn) do
+    query = from(b in Bill,
+                 where: ^current_user(conn).id in [b.creator_id, b.payer_id],
+                 select: {b.id, b.id})
     Repo.all(query)
   end
 end

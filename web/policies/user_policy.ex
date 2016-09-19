@@ -1,5 +1,9 @@
 defmodule Caravan.User.Policy do
+  use Caravan.BasePolicy
+
   alias Caravan.User
+
+  def scope(_, _, _), do: from(User)
 
   def can?(%User{role: "admin"}, _action, _user), do: true
   def can?(%User{}, :index, User), do: false

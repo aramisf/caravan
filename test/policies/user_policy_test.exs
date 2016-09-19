@@ -1,5 +1,5 @@
 defmodule Caravan.User.PolicyTest do
-  use ExUnit.Case
+  use Caravan.PolicyCase, async: true
 
   alias Caravan.User
   alias Caravan.User.Policy
@@ -10,6 +10,8 @@ defmodule Caravan.User.PolicyTest do
   test "an admin can do everything to everyone" do
     assert Policy.can?(@admin_user, :index, User)
     assert Policy.can?(@admin_user, :show, %User{})
+    assert Policy.can?(@admin_user, :new, %User{})
+    assert Policy.can?(@admin_user, :create, %User{})
     assert Policy.can?(@admin_user, :edit, %User{})
     assert Policy.can?(@admin_user, :update, %User{})
     assert Policy.can?(@admin_user, :delete, %User{})
@@ -33,8 +35,10 @@ defmodule Caravan.User.PolicyTest do
     refute Policy.can?(@normal_user, :delete, %User{id: 1})
   end
 
-  test "anyone can create users" do
-    assert Policy.can?(%User{}, :new, %User{})
-    assert Policy.can?(%User{}, :create, %User{})
+  test "anyone can create users, even not logged in user" do
+    assert Policy.can?(@normal_user, :new, %User{})
+    assert Policy.can?(@normal_user, :create, %User{})
+    assert Policy.can?(nil, :new, %User{})
+    assert Policy.can?(nil, :create, %User{})
   end
 end

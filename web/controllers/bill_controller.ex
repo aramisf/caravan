@@ -6,20 +6,30 @@ defmodule Caravan.BillController do
 
   alias Caravan.BillService
 
+  plug :verify_authorized
+
   def index(conn, _params) do
-    bills = Bill |> Repo.all |> Repo.preload([:creator, :payer])
-    render(conn, "index.html", bills: bills)
+    bills = scope(conn, Bill) |> Repo.all |> Repo.preload([:creator, :payer])
+
+    conn |> authorize!(Bill) |> render("index.html", bills: bills)
   end
 
   def new(conn, _params) do
-    changeset = Bill.changeset(%Bill{})
+    bill = %Bill{}
+    conn = authorize!(conn, bill)
+
+    changeset = Bill.changeset(bill)
+
     render(conn, "new.html", changeset: changeset, users: load_users)
   end
 
   def create(conn, %{"bill" => bill_params}) do
     bill_params = Map.put(bill_params, "creator_id", current_user(conn).id)
+    bill_changeset = Bill.changeset %Bill{}, bill_params
 
-    case BillService.create(bill_params) do
+    conn = authorize!(conn, bill_changeset.data)
+
+    case BillService.create(bill_changeset) do
       {:ok, _bill} ->
         conn
         |> put_flash(:info, "Bill created successfully.")
@@ -30,13 +40,16 @@ defmodule Caravan.BillController do
   end
 
   def show(conn, %{"id" => id}) do
-    bill = Bill |> Repo.get!(id) |> Repo.preload([:creator, :payer])
-    render(conn, "show.html", bill: bill)
+    bill = scope(conn, Bill) |> Repo.get!(id) |> Repo.preload([:creator, :payer])
+    conn |> authorize!(bill) |> render("show.html", bill: bill)
   end
 
   def edit(conn, %{"id" => id}) do
-    bill = Repo.get!(Bill, id)
+    bill = scope(conn, Bill) |> Repo.get!(id)
+    conn = authorize!(conn, bill)
+
     changeset = Bill.changeset(bill)
+
     render(conn, "edit.html",
            bill: bill,
            changeset: changeset,
@@ -44,9 +57,11 @@ defmodule Caravan.BillController do
   end
 
   def update(conn, %{"id" => id, "bill" => bill_params}) do
-    bill = Repo.get!(Bill, id)
+    bill = scope(conn, Bill) |> Repo.get!(id)
     bill_params = Map.put(bill_params, "creator_id", current_user(conn).id)
     changeset = Bill.changeset(bill, bill_params)
+
+    conn = authorize!(conn, bill)
 
     case Repo.update(changeset) do
       {:ok, bill} ->
@@ -62,7 +77,9 @@ defmodule Caravan.BillController do
   end
 
   def delete(conn, %{"id" => id}) do
-    bill = Repo.get!(Bill, id)
+    bill = scope(conn, Bill) |> Repo.get!(id)
+
+    conn = authorize!(conn, bill)
 
     # Here we use delete! (with a bang) because we expect
     # it to always work (and if it does not, it will raise).

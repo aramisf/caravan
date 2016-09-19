@@ -4,8 +4,15 @@ defmodule Caravan.UserTestHelpers do
 
   @endpoint Caravan.Endpoint
 
-  def create_user do
-    attrs = %{email: "io@mail.com", name: "io", password: "io"}
+  def valid_user_attrs do
+    %{email: "dummy@4test.com", name: "dummy", password: "dummy"}
+  end
+
+  def valid_admin_user_attrs do
+    %{email: "admin@4test.com", name: "admin", password: "admin", role: "admin"}
+  end
+
+  def create_user(attrs \\ valid_user_attrs) do
     Repo.insert!(User.creation_changeset(%User{}, attrs))
   end
 end

@@ -11,7 +11,7 @@ defmodule Caravan.BillMemberTestHelpers do
     bill_item = create_bill_item
     user = create_user
 
-    %{bill_item_id: bill_item.id, user_id: user.id, paid: true}
+    %{bill_item_id: bill_item.id, user_id: user.id, paid: false}
   end
 
   def create_bill_member(attrs \\ valid_bill_member_attrs) do

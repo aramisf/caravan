@@ -2,13 +2,10 @@ defmodule Caravan.BillService do
   use Caravan.BaseService
 
   alias Caravan.Repo
-  alias Caravan.Bill
   alias Caravan.BillItem
   alias Caravan.BillMember
 
-  def create(params \\ %{}) do
-    bill_changeset = Bill.changeset %Bill{}, params
-
+  def create(bill_changeset) do
     if bill_changeset.valid? do
       Repo.transaction fn ->
         bill = Repo.insert!(bill_changeset)
