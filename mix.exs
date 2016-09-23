@@ -41,7 +41,8 @@ defmodule Caravan.Mixfile do
       {:cowboy, "~> 1.0"},
       {:comeonin, "~> 2.5"},
       {:guardian, "~> 0.12.0"},
-      {:bodyguard, "~> 0.2.0"}
+      {:bodyguard, "~> 0.2.0"},
+      {:money, "~> 1.1"}
    ]
   end
 

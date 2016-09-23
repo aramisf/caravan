@@ -3,18 +3,24 @@ defmodule Caravan.UserController do
 
   alias Caravan.User
 
+  plug :verify_authorized
+
   def index(conn, _params) do
-    users = Repo.all(User)
+    users = scope(conn, User) |> Repo.all
     conn |> authorize!(User) |> render("index.html", users: users)
   end
 
   def new(conn, _params) do
-    changeset = User.creation_changeset(%User{})
+    user = %User{}
+    conn = authorize!(conn, user)
+    changeset = User.creation_changeset(user)
     render(conn, "new.html", changeset: changeset)
   end
 
   def create(conn, %{"user" => user_params}) do
     changeset = User.creation_changeset(%User{}, user_params)
+
+    conn = authorize!(conn, changeset.data)
 
     case Repo.insert(changeset) do
       {:ok, user} ->
@@ -28,12 +34,12 @@ defmodule Caravan.UserController do
   end
 
   def show(conn, %{"id" => id}) do
-    user = Repo.get!(User, id)
+    user = scope(conn, User) |> Repo.get!(id)
     conn |> authorize!(user) |> render("show.html", user: user)
   end
 
   def edit(conn, %{"id" => id}) do
-    user = Repo.get!(User, id)
+    user = scope(conn, User) |> Repo.get!(id)
     changeset = User.changeset(user)
 
     conn |> authorize!(user)
@@ -41,10 +47,10 @@ defmodule Caravan.UserController do
   end
 
   def update(conn, %{"id" => id, "user" => user_params}) do
-    user = Repo.get!(User, id)
-    changeset = User.changeset(user, user_params)
+    user = scope(conn, User) |> Repo.get!(id)
+    conn = authorize!(conn, user)
 
-    authorize!(conn, user)
+    changeset = User.changeset(user, user_params)
 
     case Repo.update(changeset) do
       {:ok, user} ->
@@ -57,9 +63,8 @@ defmodule Caravan.UserController do
   end
 
   def delete(conn, %{"id" => id}) do
-    user = Repo.get!(User, id)
-
-    authorize!(conn, user)
+    user = scope(conn, User) |> Repo.get!(id)
+    conn = authorize!(conn, user)
 
     # Here we use delete! (with a bang) because we expect
     # it to always work (and if it does not, it will raise).

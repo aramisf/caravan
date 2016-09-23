@@ -1,0 +1,30 @@
+<h2>Listing bills</h2>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Creator</th>
+      <th>Payer</th>
+      <th>Total amount</th>
+
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+<%= for bill <- @bills do %>
+    <tr>
+      <td><%= bill.creator.name %></td>
+      <td><%= bill.payer.name %></td>
+      <td><%= total_amount bill %></td>
+
+      <td class="text-right">
+        <%= link "Show", to: bill_path(@conn, :show, bill), class: "btn btn-default btn-xs" %>
+        <%= link "Edit", to: bill_path(@conn, :edit, bill), class: "btn btn-default btn-xs" %>
+        <%= link "Delete", to: bill_path(@conn, :delete, bill), method: :delete, data: [confirm: "Are you sure?"], class: "btn btn-danger btn-xs" %>
+      </td>
+    </tr>
+<% end %>
+  </tbody>
+</table>
+
+<%= link "New bill", to: bill_path(@conn, :new) %>
