@@ -9,3 +9,11 @@
 #
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
+
+poorguy = %{
+  email: "poor@mail.com",
+  name: "Poor",
+  password: "poor",
+  role: "admin"
+}
+Caravan.Repo.insert!(Caravan.User.creation_changeset(%Caravan.User{}, poorguy))

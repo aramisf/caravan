@@ -36,6 +36,8 @@ defmodule Caravan.Web do
 
       import Caravan.Router.Helpers
       import Caravan.Gettext
+
+      import Bodyguard.Controller
     end
   end
 
