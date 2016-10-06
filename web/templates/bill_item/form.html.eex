@@ -5,11 +5,7 @@
     </div>
   <% end %>
 
-  <div class="form-group">
-    <%= label f, :bill_id, class: "control-label" %>
-    <%= select f, :bill_id, @bills, class: "form-control" %>
-    <%= error_tag f, :bill_id %>
-  </div>
+  <%= hidden_input f, :bill_id, value: @bill_id %>
 
   <div class="form-group">
     <%= label f, :description, class: "control-label" %>

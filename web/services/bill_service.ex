@@ -39,7 +39,4 @@ defmodule Caravan.BillService do
       {:error, bill_changeset}
     end
   end
-
-  defp create_dependent_resources(bill) do
-  end
 end

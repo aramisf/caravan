@@ -9,7 +9,12 @@ defmodule Caravan.BillTestHelpers do
   def valid_bill_attrs do
     user = create_user
 
-    %{creator_id: user.id, payer_id: user.id}
+    %{
+      creator_id: user.id,
+      payer_id: user.id,
+      member_ids: [user.id],
+      total_amount: 10
+    }
   end
 
   def create_bill(attrs \\ valid_bill_attrs) do

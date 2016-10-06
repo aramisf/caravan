@@ -1,6 +1,7 @@
 <h2>New bill item</h2>
 
-<%= render "form.html", changeset: @changeset, bills: @bills,
+<%= render "form.html", changeset: @changeset,
+                        bill_id: @bill_id,
                         action: bill_item_path(@conn, :create) %>
 
-<%= link "Back", to: bill_item_path(@conn, :index) %>
+<%= link "Back", to: bill_path(@conn, :show, @bill_id) %>

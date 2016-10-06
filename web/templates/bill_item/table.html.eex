@@ -1,9 +1,6 @@
-<h2>Listing bill items</h2>
-
 <table class="table">
   <thead>
     <tr>
-      <th>Bill</th>
       <th>Description</th>
       <th>Amount</th>
 
@@ -13,7 +10,6 @@
   <tbody>
 <%= for bill_item <- @bill_items do %>
     <tr>
-      <td><%= bill_item.bill_id %></td>
       <td><%= bill_item.description %></td>
       <td><%= bill_item.amount %></td>
 
@@ -27,4 +23,3 @@
   </tbody>
 </table>
 
-<%= link "New bill item", to: bill_item_path(@conn, :new) %>

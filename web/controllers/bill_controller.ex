@@ -2,6 +2,7 @@ defmodule Caravan.BillController do
   use Caravan.Web, :controller
 
   alias Caravan.Bill
+  alias Caravan.BillItemQuery
   alias Caravan.User
 
   alias Caravan.BillService
@@ -25,8 +26,7 @@ defmodule Caravan.BillController do
 
   def create(conn, %{"bill" => bill_params}) do
     bill_params = Map.put(bill_params, "creator_id", current_user(conn).id)
-    IO.inspect bill_params
-    bill_changeset = Bill.changeset %Bill{}, bill_params
+    bill_changeset = Bill.creation_changeset %Bill{}, bill_params
 
     conn = authorize!(conn, bill_changeset.data)
 
@@ -41,18 +41,26 @@ defmodule Caravan.BillController do
   end
 
   def show(conn, %{"id" => id}) do
-    bill = scope(conn, Bill) |> Repo.get!(id) |> Repo.preload([:creator, :payer])
-    conn |> authorize!(bill) |> render("show.html", bill: bill)
+    bill = scope(conn, Bill)
+           |> Repo.get!(id)
+           |> Repo.preload([:creator, :payer])
+    bill_items = Repo.all BillItemQuery.by_bill(bill.id)
+
+    conn
+    |> authorize!(bill)
+    |> render("show.html", bill: bill, bill_items: bill_items)
   end
 
   def edit(conn, %{"id" => id}) do
     bill = scope(conn, Bill) |> Repo.get!(id)
+    bill_items = Repo.all BillItemQuery.by_bill(bill.id)
     conn = authorize!(conn, bill)
 
     changeset = Bill.changeset(bill)
 
     render(conn, "edit.html",
            bill: bill,
+           bill_items: bill_items,
            changeset: changeset,
            users: load_users)
   end
@@ -70,8 +78,10 @@ defmodule Caravan.BillController do
         |> put_flash(:info, "Bill updated successfully.")
         |> redirect(to: bill_path(conn, :show, bill))
       {:error, changeset} ->
+        bill_items = Repo.all BillItemQuery.by_bill(bill.id)
         render(conn, "edit.html",
                bill: bill,
+               bill_items: bill_items,
                changeset: changeset,
                users: load_users)
     end

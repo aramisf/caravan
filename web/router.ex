@@ -36,7 +36,7 @@ defmodule Caravan.Router do
     get "/", PageController, :index
     resources "/users", UserController, except: [:new, :create]
     resources "/bills", BillController
-    resources "/bill_items", BillItemController
+    resources "/bill_items", BillItemController, except: [:index]
     resources "/bill_members", BillMemberController
   end
 

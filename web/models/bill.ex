@@ -18,4 +18,9 @@ defmodule Caravan.Bill do
     |> cast(params, [:creator_id, :payer_id, :member_ids, :total_amount])
     |> validate_required([:creator_id, :payer_id])
   end
+
+  def creation_changeset(struct, params \\ %{}) do
+    changeset(struct, params)
+    |> validate_required([:total_amount])
+  end
 end

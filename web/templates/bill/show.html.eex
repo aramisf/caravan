@@ -13,10 +13,21 @@
   </li>
 
   <li>
+    <strong>Members:</strong>
+    <%= member_names @bill %>
+  </li>
+
+  <li>
     <strong>Total amount:</strong>
     <%= total_amount @bill %>
   </li>
 </ul>
 
-<%= link "Edit", to: bill_path(@conn, :edit, @bill) %>
+<%= link "Edit", to: bill_path(@conn, :edit, @bill) %> |
 <%= link "Back", to: bill_path(@conn, :index) %>
+
+<h3>Bill items</h3>
+
+<%= render BillItemView, "table.html", conn: @conn, bill_items: @bill_items %>
+
+<%= link "New bill item", to: bill_item_path(@conn, :new, bill_id: @bill.id) %>

@@ -31,7 +31,8 @@ defmodule Caravan.BillControllerTest do
 
     conn = post(conn, bill_path(conn, :create), bill: valid_attrs)
     assert redirected_to(conn) == bill_path(conn, :index)
-    assert Repo.get_by(Bill, valid_attrs)
+    attrs_to_query = Map.drop(valid_attrs, [:member_ids, :total_amount])
+    assert Repo.get_by(Bill, attrs_to_query)
   end
 
   test "creates resource and set the creator to the current user", %{conn: conn, current_user: current_user} do
@@ -39,16 +40,18 @@ defmodule Caravan.BillControllerTest do
 
     conn = post(conn, bill_path(conn, :create), bill: valid_attrs)
     assert redirected_to(conn) == bill_path(conn, :index)
-    user = Repo.get_by(Bill, valid_attrs)
-    assert user
-    assert user.creator_id == current_user.id
+    attrs_to_query = Map.drop(valid_attrs, [:member_ids, :total_amount])
+    bill = Repo.get_by(Bill, attrs_to_query)
+    assert bill
+    assert bill.creator_id == current_user.id
   end
 
   test "creates resource and a bill item with it", %{conn: conn} do
     valid_attrs = Map.delete(valid_bill_attrs, :creator_id)
 
     post(conn, bill_path(conn, :create), bill: valid_attrs)
-    bill = Repo.get_by(Bill, valid_attrs)
+    attrs_to_query = Map.drop(valid_attrs, [:member_ids, :total_amount])
+    bill = Repo.get_by(Bill, attrs_to_query)
     assert Repo.get_by(BillItem, %{bill_id: bill.id})
   end
 
@@ -56,7 +59,8 @@ defmodule Caravan.BillControllerTest do
     valid_attrs = Map.delete(valid_bill_attrs, :creator_id)
 
     post(conn, bill_path(conn, :create), bill: valid_attrs)
-    bill = Repo.get_by(Bill, valid_attrs)
+    attrs_to_query = Map.drop(valid_attrs, [:member_ids, :total_amount])
+    bill = Repo.get_by(Bill, attrs_to_query)
     bill_item = Repo.get_by(BillItem, %{bill_id: bill.id})
     assert Repo.get_by(BillMember,
                        bill_item_id: bill_item.id,
@@ -93,7 +97,8 @@ defmodule Caravan.BillControllerTest do
     bill = Repo.insert! %Bill{}
     conn = put(conn, bill_path(conn, :update, bill), bill: valid_attrs)
     assert redirected_to(conn) == bill_path(conn, :show, bill)
-    assert Repo.get_by(Bill, valid_attrs)
+    attrs_to_query = Map.drop(valid_attrs, [:member_ids, :total_amount])
+    assert Repo.get_by(Bill, attrs_to_query)
   end
 
   test "does not update chosen resource and renders errors when data is invalid", %{conn: conn} do
