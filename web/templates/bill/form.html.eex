@@ -11,15 +11,20 @@
     <%= error_tag f, :payer_id %>
   </div>
 
-  <div class="form-group">
-    <%= label f, :member_ids, class: "control-label" %>
-    <%= multiple_select f, :member_ids, @users, class: "form-control" %>
-    <%= error_tag f, :member_ids %>
-  </div>
+  <%= if @template == :new do %>
+    <div class="form-group">
+      <%= label f, :member_ids, class: "control-label" %>
+      <%= multiple_select f, :member_ids, @users, class: "form-control" %>
+      <%= error_tag f, :member_ids %>
+    </div>
+  <% end %>
 
   <div class="form-group">
     <%= label f, :total_amount, class: "control-label" %>
-    <%= number_input f, :total_amount, class: "form-control", step: 0.01 %>
+    <%= number_input f, :total_amount,
+      class: "form-control",
+      step: 0.01,
+      value: total_amount @changeset.data %>
     <%= error_tag f, :total_amount %>
   </div>
 

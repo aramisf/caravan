@@ -3,12 +3,13 @@ defmodule Caravan.BillService do
 
   alias Caravan.Repo
   alias Caravan.BillItem
+  alias Caravan.BillItemQuery
   alias Caravan.BillMember
 
-  def create(bill_changeset) do
-    if bill_changeset.valid? do
+  def create(changeset) do
+    if changeset.valid? do
       Repo.transaction fn ->
-        bill = Repo.insert!(bill_changeset)
+        bill = Repo.insert!(changeset)
 
         item_params = %{
           description: "Main item",
@@ -36,7 +37,26 @@ defmodule Caravan.BillService do
         bill
       end
     else
-      {:error, bill_changeset}
+      {:error, changeset}
+    end
+  end
+
+  def update(changeset) do
+    if changeset.valid? do
+      Repo.transaction fn ->
+        bill = Repo.update!(changeset)
+
+        bill_items_query = BillItemQuery.by_bill(bill.id)
+        count_query = bill_items_query |> select([bi], count(bi.id))
+        if Repo.one(count_query) == 1 do
+          if amount = changeset.changes[:total_amount] do
+            bill_item = Repo.one(bill_items_query)
+            Repo.update!(BillItem.changeset(bill_item, %{amount: amount}))
+          end
+        end
+      end
+    else
+      {:error, changeset}
     end
   end
 end

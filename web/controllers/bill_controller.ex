@@ -72,7 +72,7 @@ defmodule Caravan.BillController do
 
     conn = authorize!(conn, bill)
 
-    case Repo.update(changeset) do
+    case BillService.update(changeset) do
       {:ok, bill} ->
         conn
         |> put_flash(:info, "Bill updated successfully.")
