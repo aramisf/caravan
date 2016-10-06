@@ -34,7 +34,7 @@ defmodule Caravan.BillItemControllerTest do
   end
 
   test "shows chosen resource", %{conn: conn} do
-    bill_item = Repo.insert! %BillItem{}
+    bill_item = create_bill_item
     conn = get(conn, bill_item_path(conn, :show, bill_item))
     assert html_response(conn, 200) =~ "Show bill item"
   end

@@ -2,6 +2,7 @@ defmodule Caravan.BillControllerTest do
   use Caravan.ConnCase
 
   import Caravan.BillTestHelpers
+  import Caravan.BillItemTestHelpers
 
   alias Caravan.Repo
   alias Caravan.Bill
@@ -75,6 +76,7 @@ defmodule Caravan.BillControllerTest do
 
   test "shows chosen resource", %{conn: conn} do
     bill = create_bill
+    create_bill_item(%{valid_bill_item_attrs | bill_id: bill.id})
     conn = get(conn, bill_path(conn, :show, bill))
     assert html_response(conn, 200) =~ "Show bill"
   end

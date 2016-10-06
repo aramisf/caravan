@@ -18,13 +18,15 @@ defmodule Caravan.BillService do
         }
         bill_item = Repo.insert! BillItem.changeset(%BillItem{}, item_params)
 
-        for member_id <- bill.member_ids do
-          member_params = %{
-            bill_item_id: bill_item.id,
-            user_id: member_id,
-            paid: false
-          }
-          Repo.insert! BillMember.changeset(%BillMember{}, member_params)
+        if bill.member_ids do
+          for member_id <- bill.member_ids do
+            member_params = %{
+              bill_item_id: bill_item.id,
+              user_id: member_id,
+              paid: false
+            }
+            Repo.insert! BillMember.changeset(%BillMember{}, member_params)
+          end
         end
 
         payer_member = Repo.get_by BillMember,
@@ -54,6 +56,8 @@ defmodule Caravan.BillService do
             Repo.update!(BillItem.changeset(bill_item, %{amount: amount}))
           end
         end
+
+        bill
       end
     else
       {:error, changeset}

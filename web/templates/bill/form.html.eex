@@ -23,8 +23,7 @@
     <%= label f, :total_amount, class: "control-label" %>
     <%= number_input f, :total_amount,
       class: "form-control",
-      step: 0.01,
-      value: total_amount @changeset.data %>
+      step: 0.01 %>
     <%= error_tag f, :total_amount %>
   </div>
 

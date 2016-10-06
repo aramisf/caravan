@@ -2,7 +2,9 @@ defmodule Caravan.BillController do
   use Caravan.Web, :controller
 
   alias Caravan.Bill
+  alias Caravan.BillQuery
   alias Caravan.BillItemQuery
+  alias Caravan.BillMemberQuery
   alias Caravan.User
 
   alias Caravan.BillService
@@ -44,16 +46,30 @@ defmodule Caravan.BillController do
     bill = scope(conn, Bill)
            |> Repo.get!(id)
            |> Repo.preload([:creator, :payer])
-    bill_items = Repo.all BillItemQuery.by_bill(bill.id)
+
+    bill_items_query = BillItemQuery.by_bill(bill.id)
+    show_advanced = Repo.one(select(bill_items_query, [bi], count(bi.id))) > 1
+    bill_items = Repo.all bill_items_query
+
+    bill_members = BillMemberQuery.by_bill(bill.id)
+                   |> Repo.all
+                   |> Repo.preload(:user)
 
     conn
     |> authorize!(bill)
-    |> render("show.html", bill: bill, bill_items: bill_items)
+    |> render("show.html",
+      bill: bill,
+      bill_items: bill_items,
+      bill_members: bill_members,
+      show_advanced: show_advanced)
   end
 
   def edit(conn, %{"id" => id}) do
     bill = scope(conn, Bill) |> Repo.get!(id)
     bill_items = Repo.all BillItemQuery.by_bill(bill.id)
+
+    bill = %{bill | total_amount: BillQuery.total_amount(bill)}
+
     conn = authorize!(conn, bill)
 
     changeset = Bill.changeset(bill)

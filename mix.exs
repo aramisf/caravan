@@ -2,15 +2,19 @@ defmodule Caravan.Mixfile do
   use Mix.Project
 
   def project do
-    [app: :caravan,
-     version: "0.0.1",
-     elixir: "~> 1.2",
-     elixirc_paths: elixirc_paths(Mix.env),
-     compilers: [:phoenix, :gettext] ++ Mix.compilers,
-     build_embedded: Mix.env == :prod,
-     start_permanent: Mix.env == :prod,
-     aliases: aliases(),
-     deps: deps()]
+    [
+      app: :caravan,
+      version: "0.0.1",
+      elixir: "~> 1.2",
+      elixirc_paths: elixirc_paths(Mix.env),
+      compilers: [:phoenix, :gettext] ++ Mix.compilers,
+      build_embedded: Mix.env == :prod,
+      start_permanent: Mix.env == :prod,
+      aliases: aliases(),
+      deps: deps(),
+      test_coverage: [tool: ExCoveralls],
+      preferred_cli_env: [coveralls: :test, "coveralls.html": :test]
+    ]
   end
 
   # Configuration for the OTP application.
@@ -42,7 +46,8 @@ defmodule Caravan.Mixfile do
       {:comeonin, "~> 2.5"},
       {:guardian, "~> 0.12.0"},
       {:bodyguard, "~> 0.2.0"},
-      {:money, "~> 1.1"}
+      {:money, "~> 1.1"},
+      {:excoveralls, "~> 0.5", only: :test}
    ]
   end
 

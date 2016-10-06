@@ -14,5 +14,5 @@
 
 </ul>
 
-<%= link "Edit", to: bill_item_path(@conn, :edit, @bill_item) %>
+<%= link "Edit", to: bill_item_path(@conn, :edit, @bill_item) %> |
 <%= link "Back", to: bill_path(@conn, :show, @bill_item.bill_id) %>

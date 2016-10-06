@@ -10,6 +10,7 @@ defmodule Caravan.BillView do
   alias Caravan.UserQuery
 
   alias Caravan.BillItemView
+  alias Caravan.BillMemberView
 
   def member_names(bill) do
     UserQuery.by_bill(bill.id)
