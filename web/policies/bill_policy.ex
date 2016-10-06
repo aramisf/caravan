@@ -3,6 +3,7 @@ defmodule Caravan.Bill.Policy do
 
   alias Caravan.Repo
   alias Caravan.Bill
+  alias Caravan.BillItem
   alias Caravan.BillMember
   alias Caravan.User
 

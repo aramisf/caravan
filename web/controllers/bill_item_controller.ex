@@ -90,10 +90,6 @@ defmodule Caravan.BillItemController do
     end
   end
 
-  defp current_user(conn) do
-    Guardian.Plug.current_resource(conn)
-  end
-
   defp load_bills(conn) do
     query = from(b in Bill,
                  where: ^current_user(conn).id in [b.creator_id, b.payer_id],

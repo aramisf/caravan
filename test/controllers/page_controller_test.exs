@@ -4,6 +4,6 @@ defmodule Caravan.PageControllerTest do
   test "GET /", %{conn: conn} do
     conn = conn |> sign_in |> get("/")
 
-    assert html_response(conn, 200) =~ "Welcome to Phoenix!"
+    assert redirected_to(conn) == bill_path(conn, :index)
   end
 end

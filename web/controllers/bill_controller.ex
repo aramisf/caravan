@@ -25,6 +25,7 @@ defmodule Caravan.BillController do
 
   def create(conn, %{"bill" => bill_params}) do
     bill_params = Map.put(bill_params, "creator_id", current_user(conn).id)
+    IO.inspect bill_params
     bill_changeset = Bill.changeset %Bill{}, bill_params
 
     conn = authorize!(conn, bill_changeset.data)
@@ -88,10 +89,6 @@ defmodule Caravan.BillController do
     conn
     |> put_flash(:info, "Bill deleted successfully.")
     |> redirect(to: bill_path(conn, :index))
-  end
-
-  defp current_user(conn) do
-    Guardian.Plug.current_resource(conn)
   end
 
   defp load_users do

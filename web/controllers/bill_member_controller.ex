@@ -100,10 +100,6 @@ defmodule Caravan.BillMemberController do
     end
   end
 
-  defp current_user(conn) do
-    Guardian.Plug.current_resource(conn)
-  end
-
   defp load_bill_items(conn) do
     query = from(bi in BillItem,
                  join: b in assoc(bi, :bill),

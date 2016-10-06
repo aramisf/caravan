@@ -12,6 +12,18 @@
   </div>
 
   <div class="form-group">
+    <%= label f, :member_ids, class: "control-label" %>
+    <%= multiple_select f, :member_ids, @users, class: "form-control" %>
+    <%= error_tag f, :member_ids %>
+  </div>
+
+  <div class="form-group">
+    <%= label f, :total_amount, class: "control-label" %>
+    <%= number_input f, :total_amount, class: "form-control", step: 0.01 %>
+    <%= error_tag f, :total_amount %>
+  </div>
+
+  <div class="form-group">
     <%= submit "Submit", class: "btn btn-primary" %>
   </div>
 <% end %>
