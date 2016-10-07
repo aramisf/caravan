@@ -1,0 +1,2 @@
+#!/bin/sh
+HEROKU_APP=humble-caravan HKAPP=humble-caravan exec "${HEROKU_COMMAND:-heroku}" "$@"

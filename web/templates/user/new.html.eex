@@ -35,5 +35,5 @@
 <%= if @current_user do %>
   <%= link "Back", to: user_path(@conn, :index) %>
 <% else %>
-  <%= link "Back", to: "/" %>
+  <%= link "Back", to: session_path(@conn, :new) %>
 <% end %>
