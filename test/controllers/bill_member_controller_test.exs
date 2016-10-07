@@ -34,18 +34,6 @@ defmodule Caravan.BillMemberControllerTest do
     assert html_response(conn, 200) =~ "New bill member"
   end
 
-  test "shows chosen resource", %{conn: conn} do
-    bill_member = create_bill_member
-    conn = get(conn, bill_member_path(conn, :show, bill_member))
-    assert html_response(conn, 200) =~ "Show bill member"
-  end
-
-  test "renders page not found when id is nonexistent", %{conn: conn} do
-    assert_error_sent 404, fn ->
-      get conn, bill_member_path(conn, :show, -1)
-    end
-  end
-
   test "renders form for editing chosen resource", %{conn: conn} do
     bill_member = create_bill_member
     conn = get(conn, bill_member_path(conn, :edit, bill_member))
@@ -53,12 +41,12 @@ defmodule Caravan.BillMemberControllerTest do
   end
 
   test "updates chosen resource and redirects when data is valid", %{conn: conn} do
-    valid_attrs = valid_bill_member_attrs
+    valid_attrs = Map.delete(valid_bill_member_attrs, :bill_item_id)
 
     bill_member = create_bill_member
     conn = put(conn, bill_member_path(conn, :update, bill_member),
                bill_member: valid_attrs)
-    assert redirected_to(conn) == bill_member_path(conn, :show, bill_member)
+    assert redirected_to(conn) == bill_item_path(conn, :edit, bill_member.bill_item_id)
     assert Repo.get_by(BillMember, valid_attrs)
   end
 

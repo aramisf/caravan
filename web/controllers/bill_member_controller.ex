@@ -37,13 +37,6 @@ defmodule Caravan.BillMemberController do
     end
   end
 
-  def show(conn, %{"id" => id}) do
-    bill_member = scope(conn, BillMember) |> Repo.get!(id)
-                  |> Repo.preload(:user)
-    conn |> authorize!(bill_member)
-    |> render("show.html", bill_member: bill_member)
-  end
-
   def edit(conn, %{"id" => id}) do
     bill_member = scope(conn, BillMember) |> Repo.get!(id)
     conn = authorize!(conn, bill_member)
@@ -66,7 +59,7 @@ defmodule Caravan.BillMemberController do
       {:ok, bill_member} ->
         conn
         |> put_flash(:info, "Bill member updated successfully.")
-        |> redirect(to: bill_member_path(conn, :show, bill_member))
+        |> redirect(to: bill_item_path(conn, :edit, bill_member.bill_item_id))
       {:error, changeset} ->
         render(conn, "edit.html",
                bill_member: bill_member,
