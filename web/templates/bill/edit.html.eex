@@ -1,7 +1,9 @@
 <h2>Edit bill</h2>
 
-<%= render "form.html", changeset: @changeset, users: @users,
+<%= render "form.html", changeset: @changeset,
+                        users: @users,
                         template: :edit,
+                        show_advanced: @show_advanced,
                         action: bill_path(@conn, :update, @bill) %>
 
 <%= link "Back", to: bill_path(@conn, :index) %>
@@ -17,10 +19,15 @@
   <%= link "New bill item", to: bill_item_path(@conn, :new,
                                                bill_id: @bill.id,
                                                return_to: @conn.request_path) %>
+
+  <span class="total-amount pull-right">
+    Total: <strong><%= total_amount @bill %></strong>
+  </span>
 <% else %>
   | <%= link "New bill item", to: bill_item_path(@conn, :new,
                                                  bill_id: @bill.id,
                                                  return_to: @conn.request_path) %>
+
   <h3>Bill members</h3>
 
   <%= render BillMemberView, "table.html",

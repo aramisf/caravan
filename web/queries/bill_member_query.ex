@@ -4,10 +4,10 @@ defmodule Caravan.BillMemberQuery do
   alias Caravan.BillItem
   alias Caravan.BillMember
 
-  @doc """
-  Returns the total bill amount of `struct` with the sum of all its `items`
-  amount
-  """
+  def by_bill_item(bill_item_id) do
+    from(bm in BillMember, where: bm.bill_item_id == ^bill_item_id)
+  end
+
   def by_bill(bill_id) do
     from(bm in BillMember,
          join: bi in BillItem, on: bi.id == bm.bill_item_id,

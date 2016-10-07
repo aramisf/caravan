@@ -3,6 +3,7 @@ defmodule Caravan.BillItem do
 
   schema "bill_items" do
     field :description, :string
+    field :member_ids, {:array, :integer}, virtual: true
     field :amount, Money.Ecto.Type
     belongs_to :bill, Caravan.Bill
 

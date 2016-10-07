@@ -19,13 +19,15 @@
     </div>
   <% end %>
 
-  <div class="form-group">
-    <%= label f, :total_amount, class: "control-label" %>
-    <%= number_input f, :total_amount,
-      class: "form-control",
-      step: 0.01 %>
-    <%= error_tag f, :total_amount %>
-  </div>
+  <%= unless @show_advanced do %>
+    <div class="form-group">
+      <%= label f, :total_amount, class: "control-label" %>
+      <%= number_input f, :total_amount,
+        class: "form-control",
+        step: 0.01 %>
+      <%= error_tag f, :total_amount %>
+    </div>
+  <% end %>
 
   <div class="form-group">
     <%= submit "Submit", class: "btn btn-primary" %>

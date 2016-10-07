@@ -14,6 +14,14 @@
     <%= error_tag f, :description %>
   </div>
 
+  <%= if @template == :new do %>
+    <div class="form-group">
+      <%= label f, :member_ids, class: "control-label" %>
+      <%= multiple_select f, :member_ids, @users, class: "form-control" %>
+      <%= error_tag f, :member_ids %>
+    </div>
+  <% end %>
+
   <div class="form-group">
     <%= label f, :amount, class: "control-label" %>
     <%= number_input f, :amount, class: "form-control", step: 0.01 %>

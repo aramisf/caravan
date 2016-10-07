@@ -27,10 +27,11 @@ defmodule Caravan.BillController do
   end
 
   def create(conn, %{"bill" => bill_params}) do
+    bill = %Bill{creator_id: current_user(conn).id}
     bill_params = Map.put(bill_params, "creator_id", current_user(conn).id)
-    bill_changeset = Bill.creation_changeset %Bill{}, bill_params
+    bill_changeset = Bill.creation_changeset bill, bill_params
 
-    conn = authorize!(conn, bill_changeset.data)
+    conn = authorize!(conn, bill)
 
     case BillService.create(bill_changeset) do
       {:ok, _bill} ->

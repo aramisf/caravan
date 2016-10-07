@@ -19,9 +19,11 @@ defmodule Caravan.BillMemberController do
   end
 
   def create(conn, %{"bill_member" => bill_member_params}) do
-    changeset = BillMember.changeset(%BillMember{}, bill_member_params)
+    %{"bill_item_id" => bill_item_id} = bill_member_params
+    bill_member = %BillMember{bill_item_id: bill_item_id}
+    changeset = BillMember.changeset(bill_member, bill_member_params)
 
-    conn = authorize!(conn, changeset.data)
+    conn = authorize!(conn, bill_member)
 
     case Repo.insert(changeset) do
       {:ok, bill_member} ->

@@ -2,7 +2,9 @@
 
 <%= render "form.html", changeset: @changeset,
                         bill_id: @bill_id,
+                        users: @users,
                         return_to: @return_to,
+                        template: :new,
                         action: bill_item_path(@conn, :create) %>
 
 <%= link "Back", to: @return_to %>
