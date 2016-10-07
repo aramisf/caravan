@@ -6,16 +6,26 @@ defmodule Caravan.BillItemController do
 
   plug :verify_authorized
 
-  def new(conn, %{"bill_id" => bill_id}) do
+  def new(conn, params) do
+    %{"bill_id" => bill_id} = params
+    return_to = params["return_to"] || bill_path(conn, :edit, bill_id)
+
     bill_item = %BillItem{bill_id: bill_id}
     conn = authorize!(conn, bill_item)
 
     changeset = BillItem.changeset(bill_item)
 
-    render(conn, "new.html", bill_id: bill_id, changeset: changeset)
+    render(conn, "new.html",
+           bill_id: bill_id,
+           return_to: return_to,
+           changeset: changeset)
   end
 
   def create(conn, %{"bill_item" => bill_item_params}) do
+    %{"bill_id" => bill_id} = bill_item_params
+    return_to = bill_item_params["return_to"]
+                || bill_path(conn, :edit, bill_id)
+
     changeset = BillItem.changeset(%BillItem{}, bill_item_params)
 
     conn = authorize!(conn, changeset.data)
@@ -24,31 +34,36 @@ defmodule Caravan.BillItemController do
       {:ok, bill_item} ->
         conn
         |> put_flash(:info, "Bill item created successfully.")
-        |> redirect(to: bill_path(conn, :show, bill_item.bill_id))
+        |> redirect(to: return_to)
       {:error, changeset} ->
-        %{"bill_id" => bill_id} = bill_item_params
         render(conn, "new.html",
                bill_id: bill_id,
+               return_to: return_to,
                changeset: changeset)
     end
   end
 
-  def show(conn, %{"id" => id}) do
+  def edit(conn, params) do
+    %{"id" => id} = params
     bill_item = scope(conn, BillItem) |> Repo.get!(id)
-    conn |> authorize!(bill_item) |> render("show.html", bill_item: bill_item)
-  end
 
-  def edit(conn, %{"id" => id}) do
-    bill_item = scope(conn, BillItem) |> Repo.get!(id)
+    return_to = params["return_to"] || bill_item_path(conn, :edit, bill_item)
+
     conn = authorize!(conn, bill_item)
 
     changeset = BillItem.changeset(bill_item)
 
-    render(conn, "edit.html", bill_item: bill_item, changeset: changeset)
+    render(conn, "edit.html",
+           bill_item: bill_item,
+           return_to: return_to,
+           changeset: changeset)
   end
 
   def update(conn, %{"id" => id, "bill_item" => bill_item_params}) do
     bill_item = scope(conn, BillItem) |> Repo.get!(id)
+    return_to = bill_item_params["return_to"]
+                || bill_item_path(conn, :edit, bill_item)
+
     changeset = BillItem.changeset(bill_item, bill_item_params)
 
     conn = authorize!(conn, bill_item)
@@ -57,15 +72,21 @@ defmodule Caravan.BillItemController do
       {:ok, bill_item} ->
         conn
         |> put_flash(:info, "Bill item updated successfully.")
-        |> redirect(to: bill_item_path(conn, :show, bill_item))
+        |> redirect(to: return_to)
       {:error, changeset} ->
-        render(conn, "edit.html", bill_item: bill_item, changeset: changeset)
+        render(conn, "edit.html",
+               bill_item: bill_item,
+               return_to: return_to,
+               changeset: changeset)
     end
   end
 
-  def delete(conn, %{"id" => id}) do
+  def delete(conn, params) do
+    %{"id" => id} = params
     bill_item = scope(conn, BillItem) |> Repo.get!(id)
     bill_id = bill_item.bill_id
+    return_to = params["return_to"] || bill_path(conn, :edit, bill_id)
+
 
     conn = authorize!(conn, bill_item)
 
@@ -73,11 +94,11 @@ defmodule Caravan.BillItemController do
       :ok ->
         conn
         |> put_flash(:info, "Bill item deleted successfully.")
-        |> redirect(to: bill_path(conn, :show, bill_id))
+        |> redirect(to: return_to)
       {:error, message} ->
         conn
         |> put_flash(:error, message)
-        |> redirect(to: bill_path(conn, :show, bill_id))
+        |> redirect(to: return_to)
     end
   end
 end

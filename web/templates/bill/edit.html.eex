@@ -6,8 +6,31 @@
 
 <%= link "Back", to: bill_path(@conn, :index) %>
 
-<h3>Bill items</h3>
+<%= if @show_advanced do %>
+  <h3>Bill items</h3>
 
-<%= render BillItemView, "table.html", conn: @conn, bill_items: @bill_items %>
+  <%= render BillItemView, "table.html",
+    conn: @conn,
+    bill_items: @bill_items,
+    return_to: @conn.request_path %>
 
-<%= link "New bill item", to: bill_item_path(@conn, :new, bill_id: @bill.id) %>
+  <%= link "New bill item", to: bill_item_path(@conn, :new,
+                                               bill_id: @bill.id,
+                                               return_to: @conn.request_path) %>
+<% else %>
+  | <%= link "New bill item", to: bill_item_path(@conn, :new,
+                                                 bill_id: @bill.id,
+                                                 return_to: @conn.request_path) %>
+  <h3>Bill members</h3>
+
+  <%= render BillMemberView, "table.html",
+    conn: @conn,
+    bill_members: @bill_members,
+    return_to: @conn.request_path %>
+
+  <%= link "New bill member",
+    to: bill_member_path(@conn, :new,
+                         bill_item_id: List.first(@bill_items).id,
+                         return_to: @conn.request_path) %>
+<% end %>
+

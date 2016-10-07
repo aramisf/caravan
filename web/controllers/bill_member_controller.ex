@@ -27,7 +27,7 @@ defmodule Caravan.BillMemberController do
       {:ok, bill_member} ->
         conn
         |> put_flash(:info, "Bill member created successfully.")
-        |> redirect(to: bill_item_path(conn, :show, bill_member.bill_item_id))
+        |> redirect(to: bill_item_path(conn, :edit, bill_member.bill_item_id))
       {:error, changeset} ->
         %{"bill_item_id" => bill_item_id} = bill_member_params
         render(conn, "new.html",
@@ -85,11 +85,11 @@ defmodule Caravan.BillMemberController do
       :ok ->
         conn
         |> put_flash(:info, "Bill member deleted successfully.")
-        |> redirect(to: bill_item_path(conn, :show, bill_item_id))
+        |> redirect(to: bill_item_path(conn, :edit, bill_item_id))
       {:error, message} ->
         conn
         |> put_flash(:error, message)
-        |> redirect(to: bill_item_path(conn, :show, bill_item_id))
+        |> redirect(to: bill_item_path(conn, :edit, bill_item_id))
     end
   end
 

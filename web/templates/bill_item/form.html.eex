@@ -6,6 +6,7 @@
   <% end %>
 
   <%= hidden_input f, :bill_id, value: @bill_id %>
+  <%= hidden_input f, :return_to, value: @return_to %>
 
   <div class="form-group">
     <%= label f, :description, class: "control-label" %>

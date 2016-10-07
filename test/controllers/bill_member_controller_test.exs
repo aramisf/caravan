@@ -24,7 +24,7 @@ defmodule Caravan.BillMemberControllerTest do
     bill_item_id = valid_attrs.bill_item_id
 
     conn = post(conn, bill_member_path(conn, :create), bill_member: valid_attrs)
-    assert redirected_to(conn) == bill_item_path(conn, :show, bill_item_id)
+    assert redirected_to(conn) == bill_item_path(conn, :edit, bill_item_id)
     assert Repo.get_by(BillMember, valid_attrs)
   end
 
@@ -81,7 +81,7 @@ defmodule Caravan.BillMemberControllerTest do
     bill_item_id = bill_member_two.bill_item_id
 
     conn = delete(conn, bill_member_path(conn, :delete, bill_member_two))
-    assert redirected_to(conn) == bill_item_path(conn, :show, bill_item_id)
+    assert redirected_to(conn) == bill_item_path(conn, :edit, bill_item_id)
     refute Repo.get(BillMember, old_id)
   end
 
@@ -89,7 +89,7 @@ defmodule Caravan.BillMemberControllerTest do
     bill_member = create_bill_member
     bill_item_id = bill_member.bill_item_id
     conn = delete(conn, bill_member_path(conn, :delete, bill_member))
-    assert redirected_to(conn) == bill_item_path(conn, :show, bill_item_id)
+    assert redirected_to(conn) == bill_item_path(conn, :edit, bill_item_id)
     assert Repo.get(BillMember, bill_member.id)
   end
 end

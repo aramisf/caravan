@@ -18,7 +18,6 @@
       <td><%= total_amount bill %></td>
 
       <td class="text-right">
-        <%= link "Show", to: bill_path(@conn, :show, bill), class: "btn btn-default btn-xs" %>
         <%= link "Edit", to: bill_path(@conn, :edit, bill), class: "btn btn-default btn-xs" %>
         <%= link "Delete", to: bill_path(@conn, :delete, bill), method: :delete, data: [confirm: "Are you sure?"], class: "btn btn-danger btn-xs" %>
       </td>

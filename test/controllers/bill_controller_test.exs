@@ -74,21 +74,9 @@ defmodule Caravan.BillControllerTest do
     assert html_response(conn, 200) =~ "New bill"
   end
 
-  test "shows chosen resource", %{conn: conn} do
+  test "renders form for editing chosen resource", %{conn: conn} do
     bill = create_bill
     create_bill_item(%{valid_bill_item_attrs | bill_id: bill.id})
-    conn = get(conn, bill_path(conn, :show, bill))
-    assert html_response(conn, 200) =~ "Show bill"
-  end
-
-  test "renders page not found when id is nonexistent", %{conn: conn} do
-    assert_error_sent 404, fn ->
-      get(conn, bill_path(conn, :show, -1))
-    end
-  end
-
-  test "renders form for editing chosen resource", %{conn: conn} do
-    bill = Repo.insert! %Bill{}
     conn = get(conn, bill_path(conn, :edit, bill))
     assert html_response(conn, 200) =~ "Edit bill"
   end
@@ -98,14 +86,15 @@ defmodule Caravan.BillControllerTest do
 
     bill = Repo.insert! %Bill{}
     conn = put(conn, bill_path(conn, :update, bill), bill: valid_attrs)
-    assert redirected_to(conn) == bill_path(conn, :show, bill)
+    assert redirected_to(conn) == bill_path(conn, :index)
     attrs_to_query = Map.drop(valid_attrs, [:member_ids, :total_amount])
     assert Repo.get_by(Bill, attrs_to_query)
   end
 
   test "does not update chosen resource and renders errors when data is invalid", %{conn: conn} do
-    bill = Repo.insert! %Bill{}
-    conn = put(conn, bill_path(conn, :update, bill), bill: @invalid_attrs)
+    bill = create_bill
+    create_bill_item(%{valid_bill_item_attrs | bill_id: bill.id})
+    conn = put(conn, bill_path(conn, :update, bill), bill: %{payer_id: nil})
     assert html_response(conn, 200) =~ "Edit bill"
   end
 

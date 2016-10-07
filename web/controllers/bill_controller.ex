@@ -42,10 +42,8 @@ defmodule Caravan.BillController do
     end
   end
 
-  def show(conn, %{"id" => id}) do
-    bill = scope(conn, Bill)
-           |> Repo.get!(id)
-           |> Repo.preload([:creator, :payer])
+  def edit(conn, %{"id" => id}) do
+    bill = scope(conn, Bill) |> Repo.get!(id)
 
     bill_items_query = BillItemQuery.by_bill(bill.id)
     show_advanced = Repo.one(select(bill_items_query, [bi], count(bi.id))) > 1
@@ -54,19 +52,6 @@ defmodule Caravan.BillController do
     bill_members = BillMemberQuery.by_bill(bill.id)
                    |> Repo.all
                    |> Repo.preload(:user)
-
-    conn
-    |> authorize!(bill)
-    |> render("show.html",
-      bill: bill,
-      bill_items: bill_items,
-      bill_members: bill_members,
-      show_advanced: show_advanced)
-  end
-
-  def edit(conn, %{"id" => id}) do
-    bill = scope(conn, Bill) |> Repo.get!(id)
-    bill_items = Repo.all BillItemQuery.by_bill(bill.id)
 
     bill = %{bill | total_amount: BillQuery.total_amount(bill)}
 
@@ -77,6 +62,8 @@ defmodule Caravan.BillController do
     render(conn, "edit.html",
            bill: bill,
            bill_items: bill_items,
+           bill_members: bill_members,
+           show_advanced: show_advanced,
            changeset: changeset,
            users: load_users)
   end
@@ -92,12 +79,21 @@ defmodule Caravan.BillController do
       {:ok, bill} ->
         conn
         |> put_flash(:info, "Bill updated successfully.")
-        |> redirect(to: bill_path(conn, :show, bill))
+        |> redirect(to: bill_path(conn, :index))
       {:error, changeset} ->
-        bill_items = Repo.all BillItemQuery.by_bill(bill.id)
+        bill_items_query = BillItemQuery.by_bill(bill.id)
+        show_advanced = Repo.one(select(bill_items_query, [bi], count(bi.id))) > 1
+        bill_items = Repo.all bill_items_query
+
+        bill_members = BillMemberQuery.by_bill(bill.id)
+                       |> Repo.all
+                       |> Repo.preload(:user)
+
         render(conn, "edit.html",
                bill: bill,
                bill_items: bill_items,
+               bill_members: bill_members,
+               show_advanced: show_advanced,
                changeset: changeset,
                users: load_users)
     end

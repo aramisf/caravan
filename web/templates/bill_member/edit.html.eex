@@ -5,4 +5,4 @@
                         bill_item_id: @bill_member.bill_item_id,
                         users: @users %>
 
-<%= link "Back", to: bill_item_path(@conn, :show, @bill_member.bill_item_id) %>
+<%= link "Back", to: bill_item_path(@conn, :edit, @bill_member.bill_item_id) %>
