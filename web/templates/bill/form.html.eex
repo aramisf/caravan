@@ -7,7 +7,7 @@
 
   <div class="form-group">
     <%= label f, :payer_id, class: "control-label" %>
-    <%= select f, :payer_id, @users, class: "form-control" %>
+    <%= select f, :payer_id, @users, class: "form-control", value: @payer_id %>
     <%= error_tag f, :payer_id %>
   </div>
 

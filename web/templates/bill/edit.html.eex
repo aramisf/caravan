@@ -2,6 +2,7 @@
 
 <%= render "form.html", changeset: @changeset,
                         users: @users,
+                        payer_id: @bill.payer_id,
                         template: :edit,
                         show_advanced: @show_advanced,
                         action: bill_path(@conn, :update, @bill) %>

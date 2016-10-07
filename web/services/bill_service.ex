@@ -34,6 +34,13 @@ defmodule Caravan.BillService do
           user_id: bill.payer_id
         if payer_member do
           Repo.update! BillMember.changeset(payer_member, %{paid: true})
+        else
+          member_params = %{
+            bill_item_id: bill_item.id,
+            user_id: bill.payer_id,
+            paid: false
+          }
+          Repo.insert! BillMember.changeset(%BillMember{}, member_params)
         end
 
         bill

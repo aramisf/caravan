@@ -1,6 +1,8 @@
 <h2>New bill</h2>
 
-<%= render "form.html", changeset: @changeset, users: @users,
+<%= render "form.html", changeset: @changeset,
+                        users: @users,
+                        payer_id: @payer_id,
                         template: :new,
                         show_advanced: false,
                         action: bill_path(@conn, :create) %>

@@ -23,7 +23,10 @@ defmodule Caravan.BillController do
 
     changeset = Bill.changeset(bill)
 
-    render(conn, "new.html", changeset: changeset, users: load_users)
+    render(conn, "new.html",
+           changeset: changeset,
+           users: load_users,
+           payer_id: current_user(conn).id)
   end
 
   def create(conn, %{"bill" => bill_params}) do
@@ -39,7 +42,10 @@ defmodule Caravan.BillController do
         |> put_flash(:info, "Bill created successfully.")
         |> redirect(to: bill_path(conn, :index))
       {:error, changeset} ->
-        render(conn, "new.html", changeset: changeset, users: load_users)
+        render(conn, "new.html",
+               changeset: changeset,
+               users: load_users,
+               payer_id: current_user(conn).id)
     end
   end
 

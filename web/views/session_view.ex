@@ -1,7 +1,7 @@
 defmodule Caravan.SessionView do
   use Caravan.Web, :view
 
-  def main_content_classes do
+  def main_content_classes(conn) do
     Enum.join [
       "col-xs-offset-1 col-xs-10",
       "col-sm-offset-2 col-sm-8",
