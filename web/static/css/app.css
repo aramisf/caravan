@@ -14,6 +14,12 @@ body {
   padding: 0 20px;
 }
 
+.logo-link,
+.logo-link:hover {
+  color: #333;
+  text-decoration: none;
+}
+
 .logo {
   background-image: url("/images/logo.png");
   background-size: 70px;

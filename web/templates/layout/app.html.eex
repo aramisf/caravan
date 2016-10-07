@@ -32,8 +32,10 @@
             <% end %>
           </ul>
         </nav>
-        <span class="logo"></span>
-        <span class="app-title">The humble caravan!</span>
+        <%= link to: "/", class: "logo-link" do %>
+          <span class="logo"></span>
+          <span class="app-title">The humble caravan!</span>
+        <% end %>
       </header>
 
       <p class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></p>
