@@ -2,6 +2,16 @@
 
 Application for our financial conscience caravan!
 
+## Deploying
+
+If you want to deploy a quick test environment, you can use this heroku deploy
+button here:
+
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
+
+It will ask all the environment variables needed! Be sure to keep app.json up to
+date, than this will always work.
+
 ## Development
 
 This project is our first Phoenix project, and we are trying not to complicate
