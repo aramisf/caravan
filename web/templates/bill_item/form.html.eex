@@ -5,17 +5,22 @@
     </div>
   <% end %>
 
-  <div class="form-group">
-    <%= label f, :bill_id, class: "control-label" %>
-    <%= select f, :bill_id, @bills, class: "form-control" %>
-    <%= error_tag f, :bill_id %>
-  </div>
+  <%= hidden_input f, :bill_id, value: @bill_id %>
+  <%= hidden_input f, :return_to, value: @return_to %>
 
   <div class="form-group">
     <%= label f, :description, class: "control-label" %>
     <%= text_input f, :description, class: "form-control" %>
     <%= error_tag f, :description %>
   </div>
+
+  <%= if @template == :new do %>
+    <div class="form-group">
+      <%= label f, :member_ids, class: "control-label" %>
+      <%= multiple_select f, :member_ids, @users, class: "form-control" %>
+      <%= error_tag f, :member_ids %>
+    </div>
+  <% end %>
 
   <div class="form-group">
     <%= label f, :amount, class: "control-label" %>

@@ -24,8 +24,13 @@ defmodule Caravan.UserController do
 
     case Repo.insert(changeset) do
       {:ok, user} ->
+        conn = if current_user(conn) do
+          conn
+        else
+          Guardian.Plug.sign_in(conn, user)
+        end
+
         conn
-        |> Guardian.Plug.sign_in(user)
         |> put_flash(:info, "User created successfully.")
         |> redirect(to: "/")
       {:error, changeset} ->

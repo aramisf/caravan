@@ -7,38 +7,42 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Hello Caravan!</title>
+    <title>The humble caravan!</title>
     <link rel="stylesheet" href="<%= static_path(@conn, "/css/app.css") %>">
   </head>
 
   <body>
     <div class="container">
-      <header class="header">
-        <nav role="navigation">
-          <ul class="nav nav-pills pull-right">
-            <%= if @current_user do %>
+      <%= if @current_user do %>
+        <header class="header">
+          <%= link to: "/", class: "logo-link", tabindex: -1 do %>
+            <span class="logo"></span>
+            <span class="app-title">The humble caravan!</span>
+          <% end %>
+          <nav class="pull-right" role="navigation">
+            <ul class="nav nav-pills pull-right">
+              <%= if can?(@current_user, :index, User) do %>
+                <li><%= link "Users", to: user_path(@conn, :index), tabindex: -1 %></li>
+              <% end %>
               <li>
                 <%= link "Sign out",
                   to: session_path(@conn, :delete, @current_user),
-                  method: "delete" %>
+                  method: "delete",
+                  tabindex: -1 %>
               </li>
-            <% else %>
-              <li><%= link "Register", to: user_path(@conn, :new) %></li>
-              <li><%= link "Sign in", to: session_path(@conn, :new) %></li>
-            <% end %>
-          </ul>
-        </nav>
-        <span class="logo"></span>
-      </header>
+            </ul>
+          </nav>
+        </header>
+      <% end %>
 
       <p class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></p>
       <p class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></p>
 
-      <main role="main">
+      <main class="main-content <%= main_content_classes @view_module, @conn %>" role="main">
         <%= render @view_module, @view_template, assigns %>
       </main>
 
-    </div> <!-- /container -->
+    </div>
     <script src="<%= static_path(@conn, "/js/app.js") %>"></script>
   </body>
 </html>

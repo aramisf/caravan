@@ -1,30 +1,5 @@
 <h2>Listing bill members</h2>
 
-<table class="table">
-  <thead>
-    <tr>
-      <th>User</th>
-      <th>Bill item</th>
-      <th>Paid</th>
-
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-<%= for bill_member <- @bill_members do %>
-    <tr>
-      <td><%= bill_member.user.name %></td>
-      <td><%= bill_member.bill_item_id %></td>
-      <td><%= bill_member.paid %></td>
-
-      <td class="text-right">
-        <%= link "Show", to: bill_member_path(@conn, :show, bill_member), class: "btn btn-default btn-xs" %>
-        <%= link "Edit", to: bill_member_path(@conn, :edit, bill_member), class: "btn btn-default btn-xs" %>
-        <%= link "Delete", to: bill_member_path(@conn, :delete, bill_member), method: :delete, data: [confirm: "Are you sure?"], class: "btn btn-danger btn-xs" %>
-      </td>
-    </tr>
-<% end %>
-  </tbody>
-</table>
+<%= render "table.html", conn: @conn, bill_members: @bill_members %>
 
 <%= link "New bill member", to: bill_member_path(@conn, :new) %>

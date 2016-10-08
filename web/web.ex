@@ -38,6 +38,10 @@ defmodule Caravan.Web do
       import Caravan.Gettext
 
       import Bodyguard.Controller
+
+      def current_user(conn) do
+        Guardian.Plug.current_resource(conn)
+      end
     end
   end
 
@@ -54,6 +58,10 @@ defmodule Caravan.Web do
       import Caravan.Router.Helpers
       import Caravan.ErrorHelpers
       import Caravan.Gettext
+
+      def current_user(conn) do
+        Guardian.Plug.current_resource(conn)
+      end
     end
   end
 

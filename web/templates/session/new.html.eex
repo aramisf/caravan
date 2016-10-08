@@ -1,4 +1,6 @@
-<h2>New session</h2>
+<span class="big-logo"></span>
+
+<h2 class="text-center">Welcome!</h2>
 
 <%= form_for @changeset, session_path(@conn, :create), fn f -> %>
   <%= if @changeset.action do %>
@@ -20,6 +22,10 @@
   </div>
 
   <div class="form-group">
-    <%= submit "Submit", class: "btn btn-primary" %>
+    <%= submit "Sign in", class: "btn btn-primary btn-block btn-lg" %>
+  </div>
+
+  <div class="form-group">
+    <%= link "Register", to: user_path(@conn, :new) %>
   </div>
 <% end %>

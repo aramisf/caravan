@@ -7,9 +7,27 @@
 
   <div class="form-group">
     <%= label f, :payer_id, class: "control-label" %>
-    <%= select f, :payer_id, @users, class: "form-control" %>
+    <%= select f, :payer_id, @users, class: "form-control", value: @payer_id %>
     <%= error_tag f, :payer_id %>
   </div>
+
+  <%= if @template == :new do %>
+    <div class="form-group">
+      <%= label f, :member_ids, class: "control-label" %>
+      <%= multiple_select f, :member_ids, @users, class: "form-control" %>
+      <%= error_tag f, :member_ids %>
+    </div>
+  <% end %>
+
+  <%= unless @show_advanced do %>
+    <div class="form-group">
+      <%= label f, :total_amount, class: "control-label" %>
+      <%= number_input f, :total_amount,
+        class: "form-control",
+        step: 0.01 %>
+      <%= error_tag f, :total_amount %>
+    </div>
+  <% end %>
 
   <div class="form-group">
     <%= submit "Submit", class: "btn btn-primary" %>

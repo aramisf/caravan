@@ -2,6 +2,9 @@ defmodule Caravan.BillController do
   use Caravan.Web, :controller
 
   alias Caravan.Bill
+  alias Caravan.BillQuery
+  alias Caravan.BillItemQuery
+  alias Caravan.BillMemberQuery
   alias Caravan.User
 
   alias Caravan.BillService
@@ -20,14 +23,18 @@ defmodule Caravan.BillController do
 
     changeset = Bill.changeset(bill)
 
-    render(conn, "new.html", changeset: changeset, users: load_users)
+    render(conn, "new.html",
+           changeset: changeset,
+           users: load_users,
+           payer_id: current_user(conn).id)
   end
 
   def create(conn, %{"bill" => bill_params}) do
+    bill = %Bill{creator_id: current_user(conn).id}
     bill_params = Map.put(bill_params, "creator_id", current_user(conn).id)
-    bill_changeset = Bill.changeset %Bill{}, bill_params
+    bill_changeset = Bill.creation_changeset bill, bill_params
 
-    conn = authorize!(conn, bill_changeset.data)
+    conn = authorize!(conn, bill)
 
     case BillService.create(bill_changeset) do
       {:ok, _bill} ->
@@ -35,23 +42,35 @@ defmodule Caravan.BillController do
         |> put_flash(:info, "Bill created successfully.")
         |> redirect(to: bill_path(conn, :index))
       {:error, changeset} ->
-        render(conn, "new.html", changeset: changeset, users: load_users)
+        render(conn, "new.html",
+               changeset: changeset,
+               users: load_users,
+               payer_id: current_user(conn).id)
     end
-  end
-
-  def show(conn, %{"id" => id}) do
-    bill = scope(conn, Bill) |> Repo.get!(id) |> Repo.preload([:creator, :payer])
-    conn |> authorize!(bill) |> render("show.html", bill: bill)
   end
 
   def edit(conn, %{"id" => id}) do
     bill = scope(conn, Bill) |> Repo.get!(id)
+
+    bill_items_query = BillItemQuery.by_bill(bill.id)
+    show_advanced = Repo.one(select(bill_items_query, [bi], count(bi.id))) > 1
+    bill_items = Repo.all bill_items_query
+
+    bill_members = BillMemberQuery.by_bill(bill.id)
+                   |> Repo.all
+                   |> Repo.preload(:user)
+
+    bill = %{bill | total_amount: BillQuery.total_amount(bill)}
+
     conn = authorize!(conn, bill)
 
     changeset = Bill.changeset(bill)
 
     render(conn, "edit.html",
            bill: bill,
+           bill_items: bill_items,
+           bill_members: bill_members,
+           show_advanced: show_advanced,
            changeset: changeset,
            users: load_users)
   end
@@ -63,14 +82,25 @@ defmodule Caravan.BillController do
 
     conn = authorize!(conn, bill)
 
-    case Repo.update(changeset) do
+    case BillService.update(changeset) do
       {:ok, bill} ->
         conn
         |> put_flash(:info, "Bill updated successfully.")
-        |> redirect(to: bill_path(conn, :show, bill))
+        |> redirect(to: bill_path(conn, :index))
       {:error, changeset} ->
+        bill_items_query = BillItemQuery.by_bill(bill.id)
+        show_advanced = Repo.one(select(bill_items_query, [bi], count(bi.id))) > 1
+        bill_items = Repo.all bill_items_query
+
+        bill_members = BillMemberQuery.by_bill(bill.id)
+                       |> Repo.all
+                       |> Repo.preload(:user)
+
         render(conn, "edit.html",
                bill: bill,
+               bill_items: bill_items,
+               bill_members: bill_members,
+               show_advanced: show_advanced,
                changeset: changeset,
                users: load_users)
     end
@@ -88,10 +118,6 @@ defmodule Caravan.BillController do
     conn
     |> put_flash(:info, "Bill deleted successfully.")
     |> redirect(to: bill_path(conn, :index))
-  end
-
-  defp current_user(conn) do
-    Guardian.Plug.current_resource(conn)
   end
 
   defp load_users do

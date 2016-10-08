@@ -3,7 +3,7 @@ defmodule Caravan.BillTest do
 
   alias Caravan.Bill
 
-  @valid_attrs %{creator_id: 1, payer_id: 1}
+  @valid_attrs %{creator_id: 1, payer_id: 1, member_ids: [1], total_amount: 10}
   @invalid_attrs %{}
 
   test "changeset with valid attributes" do

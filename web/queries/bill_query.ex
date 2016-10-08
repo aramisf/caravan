@@ -4,6 +4,7 @@ defmodule Caravan.BillQuery do
   alias Caravan.Repo
   alias Caravan.BillItem
 
+  # TODO - I guess this should be on a BillItemQuery, not a BillQuery
   @doc """
   Returns the total bill amount of `struct` with the sum of all its `items`
   amount

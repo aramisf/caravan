@@ -1,6 +1,21 @@
 <h2>Edit bill item</h2>
 
-<%= render "form.html", changeset: @changeset, bills: @bills,
+<%= render "form.html", changeset: @changeset,
+                        bill_id: @bill_item.bill_id,
+                        return_to: @return_to,
+                        template: :edit,
                         action: bill_item_path(@conn, :update, @bill_item) %>
 
-<%= link "Back", to: bill_item_path(@conn, :index) %>
+<%= link "Back", to: @return_to %>
+
+<h3>Bill members</h3>
+
+<%= render BillMemberView, "table.html",
+  conn: @conn,
+  bill_members: @bill_members,
+  return_to: @conn.request_path %>
+
+<%= link "New bill member",
+  to: bill_member_path(@conn, :new,
+                       bill_item_id: @bill_item.id,
+                       return_to: @conn.request_path) %>

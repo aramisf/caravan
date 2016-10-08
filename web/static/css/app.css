@@ -1,1 +1,73 @@
 /* This file is for your main application css. */
+body {
+  margin: 0;
+}
+
+.container {
+  max-width: 100%;
+  padding: 0;
+  width: 100%;
+}
+
+.header {
+  margin: 0;
+  padding: 0 20px;
+}
+
+.logo-link,
+.logo-link:hover {
+  color: #333;
+  text-decoration: none;
+}
+
+.logo {
+  background-image: url("/images/logo.png");
+  background-size: 70px;
+  display: inline-block;
+  height: 70px;
+  margin: 5px 0 0;
+  width: 70px;
+}
+
+.big-logo {
+  background-image: url("/images/big-logo.png");
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: 200px;
+  display: inline-block;
+  height: 200px;
+  margin: 20px auto 0;
+  width: 100%;
+}
+
+.app-title {
+  display: inline-block;
+  font-size: 24px;
+  line-height: 70px;
+  margin: 5px 0 0 15px;
+  position: absolute;
+}
+
+.nav>li>form>a {
+  display: block;
+  padding: 10px 15px;
+  position: relative;
+}
+
+.nav>li>form>a:focus,
+.nav>li>form>a:hover {
+  background-color: #eee;
+  text-decoration: none;
+}
+
+.nav-pills>li>form>a {
+  border-radius: 4px;
+}
+
+.total-amount {
+  font-size: 18px;
+}
+
+.text-center {
+  text-align: center;
+}

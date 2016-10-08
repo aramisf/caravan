@@ -11,11 +11,16 @@ defmodule Caravan.BillServiceTest do
 
   def valid_changeset do
     user = create_user
-    Bill.changeset(%Bill{}, %{creator_id: user.id, payer_id: user.id})
+    Bill.creation_changeset(%Bill{}, %{
+                   creator_id: user.id,
+                   payer_id: user.id,
+                   member_ids: [user.id],
+                   total_amount: 10
+                 })
   end
 
   def invalid_changeset do
-    Bill.changeset(%Bill{}, %{})
+    Bill.creation_changeset(%Bill{}, %{})
   end
 
   test "with valid attributes creates an item for the new bill" do

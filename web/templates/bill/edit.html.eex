@@ -1,6 +1,44 @@
 <h2>Edit bill</h2>
 
-<%= render "form.html", changeset: @changeset, users: @users,
+<%= render "form.html", changeset: @changeset,
+                        users: @users,
+                        payer_id: @bill.payer_id,
+                        template: :edit,
+                        show_advanced: @show_advanced,
                         action: bill_path(@conn, :update, @bill) %>
 
 <%= link "Back", to: bill_path(@conn, :index) %>
+
+<%= if @show_advanced do %>
+  <h3>Bill items</h3>
+
+  <%= render BillItemView, "table.html",
+    conn: @conn,
+    bill_items: @bill_items,
+    return_to: @conn.request_path %>
+
+  <%= link "New bill item", to: bill_item_path(@conn, :new,
+                                               bill_id: @bill.id,
+                                               return_to: @conn.request_path) %>
+
+  <span class="total-amount pull-right">
+    Total: <strong><%= total_amount @bill %></strong>
+  </span>
+<% else %>
+  | <%= link "New bill item", to: bill_item_path(@conn, :new,
+                                                 bill_id: @bill.id,
+                                                 return_to: @conn.request_path) %>
+
+  <h3>Bill members</h3>
+
+  <%= render BillMemberView, "table.html",
+    conn: @conn,
+    bill_members: @bill_members,
+    return_to: @conn.request_path %>
+
+  <%= link "New bill member",
+    to: bill_member_path(@conn, :new,
+                         bill_item_id: List.first(@bill_items).id,
+                         return_to: @conn.request_path) %>
+<% end %>
+

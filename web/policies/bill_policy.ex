@@ -3,15 +3,19 @@ defmodule Caravan.Bill.Policy do
 
   alias Caravan.Repo
   alias Caravan.Bill
+  alias Caravan.BillItem
   alias Caravan.BillMember
   alias Caravan.User
 
   def scope(%User{role: "admin"}, :index, _opts), do: from(Bill)
-  def scope(%User{id: user_id}, :index, _opts),
-    do: from(b in Bill,
-             join: bi in BillItem, on: bi.bill_id == b.id,
-             join: bm in BillMember, on: bm.bill_item_id == bi.id,
-             where: ^user_id in [bm.user_id, b.creator_id, b.payer_id])
+  def scope(%User{id: user_id}, :index, _opts) do
+    from(b in Bill,
+         join: bi in BillItem, on: bi.bill_id == b.id,
+         join: bm in BillMember, on: bm.bill_item_id == bi.id,
+         where: ^user_id in [bm.user_id, b.creator_id, b.payer_id])
+    |> distinct(true)
+  end
+
 
   def scope(_, action, _) when action != :index, do: from(Bill)
 

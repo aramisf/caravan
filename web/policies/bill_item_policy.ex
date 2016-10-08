@@ -27,8 +27,8 @@ defmodule Caravan.BillItem.Policy do
   end
 
   def can?(user, action, bill_item) do
-    bill_item = Repo.preload(bill_item, :bill)
-    Caravan.Bill.Policy.can?(user, action, bill_item.bill)
+    bill = Repo.get_by(Bill, id: bill_item.bill_id)
+    bill && Caravan.Bill.Policy.can?(user, action, bill)
   end
 end
 

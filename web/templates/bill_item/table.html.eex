@@ -1,0 +1,32 @@
+<table class="table">
+  <thead>
+    <tr>
+      <th>Description</th>
+      <th>Amount</th>
+
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+<%= for bill_item <- @bill_items do %>
+    <tr>
+      <td><%= bill_item.description %></td>
+      <td><%= bill_item.amount %></td>
+
+      <td class="text-right">
+        <%= link "Edit",
+          to: bill_item_path(@conn, :edit, bill_item,
+                             return_to: @return_to),
+          class: "btn btn-default btn-xs" %>
+        <%= link "Delete",
+          to: bill_item_path(@conn, :delete, bill_item,
+                             return_to: @return_to),
+          method: :delete,
+          data: [confirm: "Are you sure?"],
+          class: "btn btn-danger btn-xs" %>
+      </td>
+    </tr>
+<% end %>
+  </tbody>
+</table>
+
